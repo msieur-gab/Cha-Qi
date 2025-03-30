@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Five Elements Tea Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-leaf"></i> Five Elements Tea Analyzer</h1>
+            <p class="subtitle">Traditional Chinese Medicine Approach to Tea Analysis</p>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="tea-form-container">
+                    <h2>Tea Analysis</h2>
+                    <form id="tea-analysis-form">
+                        <div class="form-group">
+                            <label for="tea-name">Tea Name:</label>
+                            <input type="text" id="tea-name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tea-type">Tea Type:</label>
+                            <select id="tea-type" required>
+                                <option value="">Select Type</option>
+                                <option value="green">Green Tea</option>
+                                <option value="black">Black Tea</option>
+                                <option value="oolong">Oolong Tea</option>
+                                <option value="white">White Tea</option>
+                                <option value="puerh">Pu-erh Tea</option>
+                                <option value="yellow">Yellow Tea</option>
+                                <option value="herbal">Herbal Tea</option>
+                                <option value="dark">Dark Tea</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tea-origin">Origin:</label>
+                            <input type="text" id="tea-origin">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="caffeine-level">Caffeine Level (1-10):</label>
+                            <div class="range-container">
+                                <input type="range" id="caffeine-level" min="1" max="10" step="0.5" value="5">
+                                <span id="caffeine-value">5</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="theanine-level">L-Theanine Level (1-10):</label>
+                            <div class="range-container">
+                                <input type="range" id="theanine-level" min="1" max="10" step="0.5" value="5">
+                                <span id="theanine-value">5</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Flavor Profile:</label>
+                            <div class="flavor-selector">
+                                <input type="text" id="flavor-input" placeholder="Type flavor and press Enter">
+                                <div id="flavor-chips" class="chip-container"></div>
+                            </div>
+                            <div class="flavor-categories">
+                                <div class="flavor-category" data-category="common">
+                                    <h4>Common Flavors</h4>
+                                    <div class="flavor-chips">
+                                        <span class="chip" data-flavor="floral">Floral</span>
+                                        <span class="chip" data-flavor="fruity">Fruity</span>
+                                        <span class="chip" data-flavor="grassy">Grassy</span>
+                                        <span class="chip" data-flavor="nutty">Nutty</span>
+                                        <span class="chip" data-flavor="sweet">Sweet</span>
+                                        <span class="chip" data-flavor="vegetal">Vegetal</span>
+                                        <span class="chip" data-flavor="woody">Woody</span>
+                                        <span class="chip" data-flavor="earthy">Earthy</span>
+                                        <span class="chip" data-flavor="mineral">Mineral</span>
+                                        <span class="chip" data-flavor="roasted">Roasted</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Processing Methods:</label>
+                            <div class="processing-selector">
+                                <div class="processing-categories">
+                                    <div class="processing-category">
+                                        <h4>Processing Methods</h4>
+                                        <div class="processing-chips">
+                                            <span class="chip" data-processing="steamed">Steamed</span>
+                                            <span class="chip" data-processing="pan-fired">Pan-fired</span>
+                                            <span class="chip" data-processing="baked">Baked</span>
+                                            <span class="chip" data-processing="roasted">Roasted</span>
+                                            <span class="chip" data-processing="withered">Withered</span>
+                                            <span class="chip" data-processing="oxidized">Oxidized</span>
+                                            <span class="chip" data-processing="fermented">Fermented</span>
+                                            <span class="chip" data-processing="aged">Aged</span>
+                                            <span class="chip" data-processing="shade-grown">Shade-grown</span>
+                                            <span class="chip" data-processing="sun-dried">Sun-dried</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="processing-chips" class="chip-container"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Geography Information:</label>
+                            <div class="geography-fields">
+                                <div class="geo-field">
+                                    <label for="geo-altitude">Altitude (m):</label>
+                                    <input type="number" id="geo-altitude" min="0" max="4000" placeholder="e.g., 1200">
+                                </div>
+                                <div class="geo-field">
+                                    <label for="geo-humidity">Humidity (%):</label>
+                                    <input type="number" id="geo-humidity" min="0" max="100" placeholder="e.g., 75">
+                                </div>
+                                <div class="geo-field">
+                                    <label for="geo-latitude">Latitude:</label>
+                                    <input type="number" id="geo-latitude" min="-90" max="90" step="0.01" placeholder="e.g., 35.6">
+                                </div>
+                                <div class="geo-field">
+                                    <label for="geo-temperature">Avg. Temp (°C):</label>
+                                    <input type="number" id="geo-temperature" min="-10" max="40" step="0.1" placeholder="e.g., 18.5">
+                                </div>
+                                <div class="geo-field">
+                                    <label for="geo-solar">Solar Radiation (kWh/m²):</label>
+                                    <input type="number" id="geo-solar" min="1" max="10" step="0.1" placeholder="e.g., 4.2">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="button-container">
+                            <button type="submit" id="analyze-button" class="primary-button">
+                                <i class="fas fa-flask"></i> Analyze Tea
+                            </button>
+                            <button type="button" id="clear-button" class="secondary-button">
+                                <i class="fas fa-broom"></i> Clear Form
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="results-container">
+                <div id="analysis-loading" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p>Analyzing tea...</p>
+                </div>
+                
+                <div id="analysis-results" class="hidden">
+                    <div class="results-header">
+                        <h2 id="results-tea-name">Tea Analysis Results</h2>
+                        <span id="results-tea-type" class="tea-type-badge"></span>
+                    </div>
+                    
+                    <!-- Five Elements Distribution Panel -->
+                    <div class="panel element-distribution-panel">
+                        <h3>Five Elements Distribution</h3>
+                        <div class="element-chart-container">
+                            <canvas id="elements-chart"></canvas>
+                        </div>
+                        <div class="element-details">
+                            <div class="element-pair">
+                                <div class="dominant-element">
+                                    <h4>Dominant Element</h4>
+                                    <div id="dominant-element-icon" class="element-icon"></div>
+                                    <p id="dominant-element-name">Wood</p>
+                                </div>
+                                <div class="supporting-element">
+                                    <h4>Supporting Element</h4>
+                                    <div id="supporting-element-icon" class="element-icon"></div>
+                                    <p id="supporting-element-name">Fire</p>
+                                </div>
+                            </div>
+                            <div class="element-bars">
+                                <div class="element-bar-container">
+                                    <span class="element-label">Wood</span>
+                                    <div class="progress-bar">
+                                        <div id="wood-bar" class="progress wood-bar" style="width: 20%"></div>
+                                    </div>
+                                    <span id="wood-value" class="element-value">20%</span>
+                                </div>
+                                <div class="element-bar-container">
+                                    <span class="element-label">Fire</span>
+                                    <div class="progress-bar">
+                                        <div id="fire-bar" class="progress fire-bar" style="width: 20%"></div>
+                                    </div>
+                                    <span id="fire-value" class="element-value">20%</span>
+                                </div>
+                                <div class="element-bar-container">
+                                    <span class="element-label">Earth</span>
+                                    <div class="progress-bar">
+                                        <div id="earth-bar" class="progress earth-bar" style="width: 20%"></div>
+                                    </div>
+                                    <span id="earth-value" class="element-value">20%</span>
+                                </div>
+                                <div class="element-bar-container">
+                                    <span class="element-label">Metal</span>
+                                    <div class="progress-bar">
+                                        <div id="metal-bar" class="progress metal-bar" style="width: 20%"></div>
+                                    </div>
+                                    <span id="metal-value" class="element-value">20%</span>
+                                </div>
+                                <div class="element-bar-container">
+                                    <span class="element-label">Water</span>
+                                    <div class="progress-bar">
+                                        <div id="water-bar" class="progress water-bar" style="width: 20%"></div>
+                                    </div>
+                                    <span id="water-value" class="element-value">20%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Seasonal Appropriateness Panel -->
+                    <div class="panel seasonality-panel">
+                        <h3>Seasonal Appropriateness</h3>
+                        <div class="seasonal-chart-container">
+                            <canvas id="seasonality-chart"></canvas>
+                        </div>
+                        <div class="seasonality-details">
+                            <div class="seasonality-summary">
+                                <h4>Current Season: <span id="current-season" class="season-spring">Spring</span></h4>
+                                <p>This tea is primarily a <strong id="current-season-element" class="element-wood">Wood</strong> tea, with <span id="seasonal-harmony">Excellent</span> harmony for the current season.</p>
+                            </div>
+                            
+                            <div class="seasonal-qualities">
+                                <h4>Seasonal Qualities</h4>
+                                <ul id="seasonal-qualities-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                            
+                            <div class="seasonal-recommendations">
+                                <h4>Seasonal Timing</h4>
+                                <p><strong>Best time of day:</strong> <span id="seasonal-time"></span></p>
+                                <p><strong>Frequency:</strong> <span id="seasonal-frequency"></span></p>
+                            </div>
+                            
+                            <div class="seasonal-benefits">
+                                <h4>Seasonal Benefits</h4>
+                                <ul id="seasonal-benefits-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                            
+                            <div class="seasonal-cautions">
+                                <h4>Seasonal Cautions</h4>
+                                <ul id="seasonal-cautions-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Effect Profile Panel -->
+                    <div class="panel effect-profile-panel">
+                        <h3>Effect Profile</h3>
+                        <div class="effect-header">
+                            <h2 id="effect-name">Bright Clarity</h2>
+                        </div>
+                        <p id="effect-description" class="effect-description">A stimulating combination that balances warming energy with cool precision. This tea energizes while maintaining mental clarity.</p>
+                        
+                        <div class="specific-effects">
+                            <h4>Key Effects</h4>
+                            <ul id="specific-effects-list">
+                                <!-- Dynamically populated -->
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- TCM Terminology Panel -->
+                    <div class="panel tcm-panel">
+                        <h3>TCM Terminology</h3>
+                        <div class="tcm-properties">
+                            <div class="tcm-property">
+                                <span class="tcm-label">Nature:</span>
+                                <span id="tcm-nature" class="tcm-value">Warm</span>
+                            </div>
+                            <div class="tcm-property">
+                                <span class="tcm-label">Flavor:</span>
+                                <span id="tcm-flavor" class="tcm-value">Bitter with Sweet</span>
+                            </div>
+                            <div class="tcm-property">
+                                <span class="tcm-label">Meridians:</span>
+                                <span id="tcm-meridians" class="tcm-value">Heart, Lung, Spleen</span>
+                            </div>
+                            <div class="tcm-property">
+                                <span class="tcm-label">Balance:</span>
+                                <span id="tcm-balance" class="tcm-value">Slight Yang</span>
+                            </div>
+                        </div>
+                        
+                        <div class="tcm-qualities">
+                            <h4>TCM Actions</h4>
+                            <ul id="tcm-qualities-list">
+                                <!-- Dynamically populated -->
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Recommendations Panel -->
+                    <div class="panel recommendations-panel">
+                        <h3>Recommendations</h3>
+                        <div class="recommendation-sections">
+                            <div class="recommendation-section">
+                                <h4><i class="far fa-clock"></i> Best Time to Enjoy</h4>
+                                <ul id="best-time-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                            
+                            <div class="recommendation-section">
+                                <h4><i class="fas fa-utensils"></i> Food Pairings</h4>
+                                <ul id="food-pairings-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                            
+                            <div class="recommendation-section">
+                                <h4><i class="fas fa-mortar-pestle"></i> Preparation Tips</h4>
+                                <ul id="preparation-tips-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                            
+                            <div class="recommendation-section">
+                                <h4><i class="fas fa-spa"></i> Complementary Activities</h4>
+                                <ul id="activities-list">
+                                    <!-- Dynamically populated -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Component Contributions Panel -->
+                    <div class="panel contributions-panel">
+                        <h3>What Makes This Tea Special</h3>
+                        <div id="contributions-container">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- No Results Display -->
+                <div id="no-results-display" class="centered-message">
+                    <div class="message-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h2>Tea Analysis</h2>
+                    <p>Input your tea details and click "Analyze Tea" to see results.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sample Teas Dropdown -->
+    <div class="sample-teas-container">
+        <button id="sample-teas-toggle" class="sample-teas-button">
+            <i class="fas fa-flask"></i> Try Sample Teas
+        </button>
+        <div id="sample-teas-dropdown" class="sample-teas-dropdown hidden">
+            <div class="sample-tea" data-tea="dragonwell">Dragon Well (Longjing)</div>
+            <div class="sample-tea" data-tea="darjeeling">Darjeeling First Flush</div>
+            <div class="sample-tea" data-tea="puerh">Aged Pu-erh</div>
+            <div class="sample-tea" data-tea="gyokuro">Gyokuro</div>
+            <div class="sample-tea" data-tea="tieguanyin">Tie Guan Yin Oolong</div>
+            <div class="sample-tea" data-tea="assam">Assam Black Tea</div>
+            <div class="sample-tea" data-tea="whitePeony">White Peony (Bai Mu Dan)</div>
+        </div>
+    </div>
+    
+    <!-- Custom Context Settings -->
+    <div class="context-settings-container">
+        <button id="context-settings-toggle" class="context-settings-button">
+            <i class="fas fa-sliders-h"></i> Context Settings
+        </button>
+        <div id="context-settings-panel" class="context-settings-panel hidden">
+            <h4>Customize Context</h4>
+            <div class="setting-group">
+                <label for="current-season-select">Current Season:</label>
+                <select id="current-season-select">
+                    <option value="spring">Spring</option>
+                    <option value="summer">Summer</option>
+                    <option value="lateSummer">Late Summer</option>
+                    <option value="autumn">Autumn</option>
+                    <option value="winter">Winter</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="constitution-select">Constitution:</label>
+                <select id="constitution-select">
+                    <option value="balanced">Balanced</option>
+                    <option value="wood">Wood</option>
+                    <option value="fire">Fire</option>
+                    <option value="earth">Earth</option>
+                    <option value="metal">Metal</option>
+                    <option value="water">Water</option>
+                </select>
+            </div>
+            <button id="update-context" class="primary-button">Update Context</button>
+        </div>
+    </div>
+    
+    <script type="module" src="app.js"></script>
+</body>
+</html>

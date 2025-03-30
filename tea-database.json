@@ -1,0 +1,325 @@
+{
+  "creativityTeas": [
+    {
+      "name": "Dragon Well (Longjing)",
+      "type": "green",
+      "origin": "Hangzhou, China",
+      "caffeineLevel": 4,
+      "lTheanineLevel": 7,
+      "flavorProfile": ["grassy", "nutty", "vegetal", "chestnut"],
+      "processingMethods": ["pan-fired", "flattened", "non-oxidized"],
+      "geography": {
+        "altitude": 650,
+        "humidity": 72,
+        "latitude": 30.2,
+        "temperature": 18,
+        "solarRadiation": 4.2
+      },
+      "tcmProperties": {
+        "energyType": "cooling",
+        "elements": ["wood", "fire"],
+        "meridians": ["liver", "heart"],
+        "healthBenefits": ["improves focus", "clears heat", "lifts spirit"],
+        "mentalEffects": ["enhances divergent thinking", "promotes mental clarity"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 80,
+        "steepingTime": 2,
+        "resteeps": 3
+      }
+    },
+    {
+      "name": "White Peony (Bai Mu Dan)",
+      "type": "white",
+      "origin": "Fujian, China",
+      "caffeineLevel": 3,
+      "lTheanineLevel": 8,
+      "flavorProfile": ["floral", "fruity", "honey", "subtle"],
+      "processingMethods": ["withered", "minimally oxidized"],
+      "geography": {
+        "altitude": 800,
+        "humidity": 75,
+        "latitude": 27.3,
+        "temperature": 17,
+        "solarRadiation": 4.5
+      },
+      "tcmProperties": {
+        "energyType": "cool",
+        "elements": ["metal", "water"],
+        "meridians": ["lung", "kidney"],
+        "healthBenefits": ["nourishes yin", "clears heat", "detoxifies"],
+        "mentalEffects": ["stimulates imagination", "enhances artistic expression"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 85,
+        "steepingTime": 4,
+        "resteeps": 2
+      }
+    },
+    {
+      "name": "Oolong Da Hong Pao (Big Red Robe)",
+      "type": "oolong",
+      "origin": "Wuyi Mountains, China",
+      "caffeineLevel": 5,
+      "lTheanineLevel": 6,
+      "flavorProfile": ["roasted", "mineral", "caramel", "woody"],
+      "processingMethods": ["withered", "partially oxidized", "charcoal roasted"],
+      "geography": {
+        "altitude": 700,
+        "humidity": 80,
+        "latitude": 27.7,
+        "temperature": 16,
+        "solarRadiation": 3.9
+      },
+      "tcmProperties": {
+        "energyType": "warm",
+        "elements": ["fire", "earth"],
+        "meridians": ["heart", "spleen"],
+        "healthBenefits": ["strengthens qi", "improves digestion", "warms body"],
+        "mentalEffects": ["balances analytical and creative thinking", "promotes mental endurance"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 95,
+        "steepingTime": 3,
+        "resteeps": 5
+      }
+    },
+    {
+      "name": "Yunnan Gold",
+      "type": "black",
+      "origin": "Yunnan, China",
+      "caffeineLevel": 6,
+      "lTheanineLevel": 5,
+      "flavorProfile": ["malty", "honey", "peppery", "cocoa"],
+      "processingMethods": ["withered", "fully oxidized", "rolled"],
+      "geography": {
+        "altitude": 1200,
+        "humidity": 65,
+        "latitude": 23.4,
+        "temperature": 20,
+        "solarRadiation": 5.0
+      },
+      "tcmProperties": {
+        "energyType": "warming",
+        "elements": ["fire", "earth"],
+        "meridians": ["heart", "spleen", "kidney"],
+        "healthBenefits": ["boosts energy", "strengthens yang", "improves circulation"],
+        "mentalEffects": ["enhances creative problem-solving", "improves cognitive flexibility"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 95,
+        "steepingTime": 3,
+        "resteeps": 2
+      }
+    },
+    {
+      "name": "Gyokuro",
+      "type": "green",
+      "origin": "Japan",
+      "caffeineLevel": 5,
+      "lTheanineLevel": 9,
+      "flavorProfile": ["umami", "marine", "sweet", "grassy"],
+      "processingMethods": ["shade-grown", "steamed", "non-oxidized"],
+      "geography": {
+        "altitude": 400,
+        "humidity": 70,
+        "latitude": 35.0,
+        "temperature": 16,
+        "solarRadiation": 3.8
+      },
+      "tcmProperties": {
+        "energyType": "cooling",
+        "elements": ["wood", "water"],
+        "meridians": ["liver", "brain"],
+        "healthBenefits": ["calms spirit", "clears liver heat", "nourishes yin"],
+        "mentalEffects": ["heightens concentration", "enhances creative flow states"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 60,
+        "steepingTime": 2,
+        "resteeps": 3
+      }
+    }
+  ],
+  "mindfulnessTeas": [
+    {
+      "name": "Silver Needle (Bai Hao Yinzhen)",
+      "type": "white",
+      "origin": "Fujian, China",
+      "caffeineLevel": 2,
+      "lTheanineLevel": 8,
+      "flavorProfile": ["honey", "melon", "delicate", "hay"],
+      "processingMethods": ["withered", "sun-dried", "minimal processing"],
+      "geography": {
+        "altitude": 900,
+        "humidity": 75,
+        "latitude": 27.3,
+        "temperature": 17,
+        "solarRadiation": 4.6
+      },
+      "tcmProperties": {
+        "energyType": "cool",
+        "elements": ["metal", "water"],
+        "meridians": ["lung", "heart"],
+        "healthBenefits": ["clears heat", "calms the mind", "reduces inflammation"],
+        "mentalEffects": ["promotes present-moment awareness", "quiets mental chatter"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 80,
+        "steepingTime": 3,
+        "resteeps": 3
+      }
+    },
+    {
+      "name": "Buddhist Tea (Fo Cha)",
+      "type": "herbal",
+      "origin": "Mount Emei, China",
+      "caffeineLevel": 0,
+      "lTheanineLevel": 0,
+      "flavorProfile": ["floral", "woody", "sweet", "earthy"],
+      "processingMethods": ["dried", "mixed"],
+      "geography": {
+        "altitude": 1500,
+        "humidity": 80,
+        "latitude": 29.5,
+        "temperature": 15,
+        "solarRadiation": 4.0
+      },
+      "tcmProperties": {
+        "energyType": "neutral",
+        "elements": ["earth", "wood"],
+        "meridians": ["heart", "liver", "lung"],
+        "healthBenefits": ["calms shen (spirit)", "harmonizes qi", "clears thoughts"],
+        "mentalEffects": ["deepens meditation", "promotes mindful awareness"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 100,
+        "steepingTime": 5,
+        "resteeps": 2
+      },
+      "ingredients": ["chrysanthemum", "goji berries", "jujube", "ginger", "licorice root"]
+    },
+    {
+      "name": "Phoenix Mountain Dancong",
+      "type": "oolong",
+      "origin": "Guangdong, China",
+      "caffeineLevel": 4,
+      "lTheanineLevel": 7,
+      "flavorProfile": ["orchid", "honey", "tropical fruit", "woodsy"],
+      "processingMethods": ["withered", "medium oxidation", "twisted"],
+      "geography": {
+        "altitude": 1000,
+        "humidity": 75,
+        "latitude": 23.7,
+        "temperature": 21,
+        "solarRadiation": 4.7
+      },
+      "tcmProperties": {
+        "energyType": "neutral",
+        "elements": ["fire", "metal"],
+        "meridians": ["heart", "lung"],
+        "healthBenefits": ["harmonizes qi", "clears phlegm", "benefits throat"],
+        "mentalEffects": ["balances emotional state", "encourages mindful sensory awareness"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 90,
+        "steepingTime": 3,
+        "resteeps": 5
+      }
+    },
+    {
+      "name": "Gaba Oolong",
+      "type": "oolong",
+      "origin": "Taiwan",
+      "caffeineLevel": 3,
+      "lTheanineLevel": 8,
+      "flavorProfile": ["fruity", "nutty", "smooth", "sweet"],
+      "processingMethods": ["oxygen-free fermentation", "medium oxidation"],
+      "geography": {
+        "altitude": 800,
+        "humidity": 78,
+        "latitude": 23.5,
+        "temperature": 19,
+        "solarRadiation": 4.3
+      },
+      "tcmProperties": {
+        "energyType": "neutral",
+        "elements": ["earth", "water"],
+        "meridians": ["heart", "brain", "liver"],
+        "healthBenefits": ["lowers blood pressure", "reduces stress", "calms nervous system"],
+        "mentalEffects": ["induces alpha brain wave state", "promotes relaxed alertness"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 90,
+        "steepingTime": 3,
+        "resteeps": 4
+      }
+    },
+    {
+      "name": "Shou Pu-erh",
+      "type": "fermented",
+      "origin": "Yunnan, China",
+      "caffeineLevel": 4,
+      "lTheanineLevel": 5,
+      "flavorProfile": ["earthy", "woody", "mushroom", "mellow"],
+      "processingMethods": ["withered", "oxidized", "pile fermented", "aged"],
+      "geography": {
+        "altitude": 1100,
+        "humidity": 70,
+        "latitude": 22.0,
+        "temperature": 21,
+        "solarRadiation": 4.8
+      },
+      "tcmProperties": {
+        "energyType": "warming",
+        "elements": ["earth", "water"],
+        "meridians": ["spleen", "stomach", "large intestine"],
+        "healthBenefits": ["aids digestion", "cleanses body", "grounds energy"],
+        "mentalEffects": ["centers thoughts", "promotes body awareness", "grounds mental energy"]
+      },
+      "brewingInstructions": {
+        "waterTemperature": 100,
+        "steepingTime": 3,
+        "resteeps": 8
+      }
+    }
+  ],
+  "tcmTerminology": {
+    "energyTypes": {
+      "cooling": "Reduces internal heat, calms overactive systems",
+      "warming": "Increases circulation, stimulates metabolism",
+      "neutral": "Balances body systems, harmonizes energy"
+    },
+    "elements": {
+      "wood": "Associated with growth, creativity, and new beginnings",
+      "fire": "Connected to passion, insight, and emotional expression",
+      "earth": "Relates to stability, nourishment, and centeredness",
+      "metal": "Linked to clarity, precision, and boundaries",
+      "water": "Connected to intuition, depth, and flow"
+    },
+    "meridians": {
+      "liver": "Governs planning, decision-making, and smooth energy flow",
+      "heart": "Houses consciousness and regulates mental activity",
+      "spleen": "Manages digestion of food and information",
+      "lung": "Controls qi and promotes clear thinking",
+      "kidney": "Stores essence and governs willpower",
+      "brain": "Seat of consciousness and cognitive function"
+    }
+  },
+  "brewingNotes": {
+    "mindfulnessTechniques": [
+      "Focus on the aroma before sipping",
+      "Observe the color and clarity of the tea",
+      "Note sensations as tea meets different parts of mouth",
+      "Pay attention to the aftertaste and how it changes",
+      "Practice conscious breathing between sips"
+    ],
+    "creativityEnhancement": [
+      "Journal thoughts that arise during tea drinking",
+      "Alternate periods of tea drinking with creative work",
+      "Use tea ceremony as a transition ritual before creative sessions",
+      "Consider how the tea's flavor inspires new ideas",
+      "Drink tea in inspiring environments"
+    ]
+  }
+}

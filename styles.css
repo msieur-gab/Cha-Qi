@@ -1,0 +1,789 @@
+/* Global Styles */
+:root {
+    /* Element Colors */
+    --wood-color: #4CAF50;
+    --fire-color: #F44336;
+    --earth-color: #FFC107;
+    --metal-color: #9E9E9E;
+    --water-color: #2196F3;
+    
+    /* UI Colors */
+    --primary-color: #3F51B5;
+    --secondary-color: #673AB7;
+    --background-color: #f5f5f5;
+    --panel-bg: #ffffff;
+    --panel-border: #e0e0e0;
+    --text-color: #333333;
+    --light-text: #757575;
+    --highlight-bg: #f0f7ff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 8px;
+}
+
+header h1 {
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+.main-content {
+    display: flex;
+    gap: 30px;
+}
+
+.sidebar {
+    flex: 0 0 380px;
+}
+
+.results-container {
+    flex: 1;
+    position: relative;
+    min-height: 500px;
+}
+
+/* Form Styles */
+.tea-form-container {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.tea-form-container h2 {
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+select {
+    background-color: white;
+}
+
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+input[type="range"] {
+    flex: 1;
+}
+
+/* Chip Styles */
+.chip-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.chip {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.chip:hover {
+    background-color: #d0d0d0;
+}
+
+.chip.selected {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.chip.removable {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chip.removable::after {
+    content: '×';
+    font-size: 1.2rem;
+    margin-left: 2px;
+}
+
+.flavor-categories, .processing-categories {
+    margin-top: 10px;
+}
+
+.flavor-category, .processing-category {
+    margin-bottom: 10px;
+}
+
+.flavor-category h4, .processing-category h4 {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: var(--light-text);
+}
+
+/* Geography Fields */
+.geography-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.geo-field input {
+    width: 100%;
+}
+
+/* Button Styles */
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.primary-button, .secondary-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    flex: 2;
+}
+
+.secondary-button {
+    background-color: #e0e0e0;
+    color: var(--text-color);
+    flex: 1;
+}
+
+.primary-button:hover {
+    background-color: #303f9f;
+}
+
+.secondary-button:hover {
+    background-color: #d0d0d0;
+}
+
+/* Results Area Styles */
+.hidden {
+    display: none !important;
+}
+
+.centered-message {
+    text-align: center;
+    padding: 50px 0;
+    color: var(--light-text);
+}
+
+.message-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    opacity: 0.4;
+}
+
+.loading-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-left-color: var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Panel Styles */
+.panel {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.panel h3 {
+    color: var(--primary-color);
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--panel-border);
+    padding-bottom: 8px;
+}
+
+/* Results Header */
+.results-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#results-tea-name {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.tea-type-badge {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Element Distribution Styles */
+.element-chart-container {
+    height: 250px;
+    margin-bottom: 20px;
+}
+
+.element-details {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+}
+
+.element-pair {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.dominant-element, .supporting-element {
+    text-align: center;
+    flex: 1;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--highlight-bg);
+}
+
+.element-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 10px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.wood-icon {
+    background-color: var(--wood-color);
+}
+
+.fire-icon {
+    background-color: var(--fire-color);
+}
+
+.earth-icon {
+    background-color: var(--earth-color);
+}
+
+.metal-icon {
+    background-color: var(--metal-color);
+}
+
+.water-icon {
+    background-color: var(--water-color);
+}
+
+.element-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.element-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.element-label {
+    width: 60px;
+    font-weight: 500;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 12px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    transition: width 0.5s ease-out;
+}
+
+.element-value {
+    width: 40px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.wood-bar {
+    background-color: var(--wood-color);
+}
+
+.fire-bar {
+    background-color: var(--fire-color);
+}
+
+.earth-bar {
+    background-color: var(--earth-color);
+}
+
+.metal-bar {
+    background-color: var(--metal-color);
+}
+
+.water-bar {
+    background-color: var(--water-color);
+}
+
+/* Effect Profile Styles */
+.effect-header {
+    margin-bottom: 15px;
+}
+
+.effect-header h2 {
+    font-size: 1.6rem;
+    color: var(--primary-color);
+}
+
+.effect-description {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.specific-effects {
+    background-color: var(--highlight-bg);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.specific-effects h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.specific-effects ul {
+    padding-left: 20px;
+}
+
+.specific-effects li {
+    margin-bottom: 8px;
+}
+
+/* TCM Terminology Styles */
+.tcm-properties {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.tcm-property {
+    background-color: var(--highlight-bg);
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+.tcm-label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--light-text);
+}
+
+.tcm-value {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.tcm-qualities {
+    background-color: var(--highlight-bg);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.tcm-qualities h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.tcm-qualities ul {
+    padding-left: 20px;
+}
+
+.tcm-qualities li {
+    margin-bottom: 8px;
+}
+
+/* Recommendations Styles */
+.recommendation-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.recommendation-section {
+    background-color: var(--highlight-bg);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.recommendation-section h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recommendation-section ul {
+    padding-left: 20px;
+}
+
+.recommendation-section li {
+    margin-bottom: 8px;
+}
+
+/* Component Contributions Styles */
+#contributions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.contribution-card {
+    background-color: var(--highlight-bg);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.contribution-card h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.contribution-card p {
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.contribution-list {
+    padding-left: 20px;
+}
+
+.contribution-list li {
+    margin-bottom: 5px;
+}
+
+/* Sample Teas Dropdown */
+.sample-teas-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.sample-teas-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sample-teas-dropdown {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    overflow: hidden;
+    width: 240px;
+}
+
+.sample-tea {
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.sample-tea:hover {
+    background-color: var(--highlight-bg);
+}
+
+/* Responsive Styles */
+@media (max-width: 1100px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+    
+    .element-details {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .recommendation-sections,
+    #contributions-container,
+    .tcm-properties {
+        grid-template-columns: 1fr;
+    }
+    
+    .geography-fields {
+        grid-template-columns: 1fr;
+    }
+    
+    .sample-teas-container {
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Animation Effects */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Element Icons */
+.element-icon i {
+    font-size: 1.5rem;
+}
+
+.wood-icon i::before {
+    content: "\f1bb"; /* tree */
+}
+
+.fire-icon i::before {
+    content: "\f06d"; /* fire */
+}
+
+.earth-icon i::before {
+    content: "\f57d"; /* mountain */
+}
+
+.metal-icon i::before {
+    content: "\f0c3"; /* flask */
+}
+
+.water-icon i::before {
+    content: "\f773"; /* water */
+}
+
+/* Add to styles.css */
+.seasonality-panel {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .seasonal-chart-container {
+    height: 300px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  
+  .seasonality-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .seasonality-summary {
+    grid-column: 1 / -1;
+    background-color: var(--highlight-bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .seasonality-summary h4 {
+    margin-bottom: 8px;
+    color: var(--primary-color);
+  }
+  
+  .seasonal-qualities,
+  .seasonal-recommendations,
+  .seasonal-benefits, 
+  .seasonal-cautions {
+    background-color: var(--highlight-bg);
+    padding: 15px;
+    border-radius: 8px;
+  }
+  
+  .seasonal-qualities h4,
+  .seasonal-recommendations h4,
+  .seasonal-benefits h4,
+  .seasonal-cautions h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+  }
+  
+  .seasonal-qualities ul,
+  .seasonal-benefits ul,
+  .seasonal-cautions ul {
+    padding-left: 18px;
+  }
+  
+  .seasonal-qualities li,
+  .seasonal-benefits li,
+  .seasonal-cautions li {
+    margin-bottom: 8px;
+  }
+  
+  /* Season-specific colors */
+  .season-spring {
+    color: #4CAF50; /* Green */
+  }
+  
+  .season-summer {
+    color: #F44336; /* Red */
+  }
+  
+  .season-lateSummer {
+    color: #FFC107; /* Yellow/Amber */
+  }
+  
+  .season-autumn {
+    color: #9E9E9E; /* Grey/Metal */
+  }
+  
+  .season-winter {
+    color: #2196F3; /* Blue */
+  }
+  
+  /* Element-specific colors */
+  .element-wood {
+    color: #4CAF50; /* Green */
+  }
+  
+  .element-fire {
+    color: #F44336; /* Red */
+  }
+  
+  .element-earth {
+    color: #FFC107; /* Yellow/Amber */
+  }
+  
+  .element-metal {
+    color: #9E9E9E; /* Grey */
+  }
+  
+  .element-water {
+    color: #2196F3; /* Blue */
+  }
+  
+  /* Harmony level indicators
