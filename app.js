@@ -530,73 +530,89 @@ function setElementBars(elements) {
 }
 
 // Draw radar chart for element distribution
+// Draw radar chart for element distribution
 function drawElementChart(elements) {
     const ctx = document.getElementById('elements-chart').getContext('2d');
     
     // Destroy existing chart if it exists
     if (window.elementsChart) {
-        window.elementsChart.destroy();
+      window.elementsChart.destroy();
     }
     
-    // Create new chart
-    window.elementsChart = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: ['Wood', 'Fire', 'Earth', 'Metal', 'Water'],
-            datasets: [{
-                label: 'Five Elements Distribution',
-                data: [
-                    Math.round(elements.wood * 100),
-                    Math.round(elements.fire * 100),
-                    Math.round(elements.earth * 100),
-                    Math.round(elements.metal * 100),
-                    Math.round(elements.water * 100)
-                ],
-                backgroundColor: 'rgba(63, 81, 181, 0.2)',
-                borderColor: 'rgba(63, 81, 181, 0.8)',
-                pointBackgroundColor: [
-                    '#4CAF50', // Wood
-                    '#F44336', // Fire
-                    '#FFC107', // Earth
-                    '#9E9E9E', // Metal
-                    '#2196F3'  // Water
-                ],
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(63, 81, 181, 1)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                r: {
-                    min: 0,
-                    max: 100,
-                    beginAtZero: true,
-                    angleLines: {
-                        display: true
-                    },
-                    ticks: {
-                        display: false
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ${context.raw}%`;
-                        }
-                    }
-                }
-            }
-        }
+    // Original percentage values (0-100)
+    const rawData = [
+      Math.round(elements.wood * 100),
+      Math.round(elements.fire * 100),
+      Math.round(elements.earth * 100),
+      Math.round(elements.metal * 100),
+      Math.round(elements.water * 100)
+    ];
+    
+    // Apply logarithmic scaling for visual emphasis
+    // You can adjust the scaling factor (50) to control the visual contrast
+    const visualData = rawData.map(value => {
+      // Add 1 to avoid log(0) issues, then scale for visibility
+      return Math.log10(value + 1) * 50;
     });
-}
+    
+    // Calculate max value for chart scale
+    const maxVisualValue = Math.max(...visualData) * 1.1; // Add 10% padding
+    
+    // Create new chart with the visually enhanced data
+    window.elementsChart = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: ['Wood', 'Fire', 'Earth', 'Metal', 'Water'],
+        datasets: [{
+          label: 'Five Elements Distribution',
+          data: visualData,
+          backgroundColor: 'rgba(63, 81, 181, 0.2)',
+          borderColor: 'rgba(63, 81, 181, 0.8)',
+          pointBackgroundColor: [
+            '#4CAF50', // Wood
+            '#F44336', // Fire
+            '#FFC107', // Earth
+            '#9E9E9E', // Metal
+            '#2196F3'  // Water
+          ],
+          pointBorderColor: '#fff',
+          pointHoverBackgroundColor: '#fff',
+          pointHoverBorderColor: 'rgba(63, 81, 181, 1)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            min: 0,
+            max: maxVisualValue, // Dynamic max based on data
+            beginAtZero: true,
+            angleLines: {
+              display: true
+            },
+            ticks: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                // Display the original percentage in the tooltip, not the scaled value
+                const elementIndex = context.dataIndex;
+                return `${context.label}: ${rawData[elementIndex]}%`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
 
 // Set items in a list element
 function setListItems(listId, items) {

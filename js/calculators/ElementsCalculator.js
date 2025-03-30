@@ -60,8 +60,10 @@ export class ElementsCalculator {
     const adjustedElements = this._applyElementInteractions(combinedElements);
     
     // Identify dominant and supporting elements
+    console.log("Adjusted elements before sorting:", adjustedElements);
     const sortedElements = Object.entries(adjustedElements)
       .sort(([, a], [, b]) => b - a);
+    console.log("Sorted elements:", sortedElements);
     
     const dominantElement = sortedElements[0][0];
     const supportingElement = sortedElements[1][0];
@@ -250,6 +252,14 @@ export class ElementsCalculator {
         }
       });
     });
+    
+    // Ensure the combined scores sum to 1.0
+    const total = Object.values(combinedElements).reduce((sum, val) => sum + val, 0);
+    if (total > 0) {
+      Object.keys(combinedElements).forEach(element => {
+        combinedElements[element] = combinedElements[element] / total;
+      });
+    }
     
     return combinedElements;
   }
