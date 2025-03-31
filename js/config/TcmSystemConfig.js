@@ -7,16 +7,11 @@ export class TcmSystemConfig {
     this.config = {
       // Element weights for different components (must sum to 1.0)
       elementWeights: {
-        // flavor: 0.4,       // Flavor has highest weight (40%)
-        // compounds: 0.3,     // Compounds have significant weight (30%)  
-        // processing: 0.2,    // Processing methods have moderate weight (20%)
-        // geography: 0.1      // Geography has lowest weight (10%)
-        flavor: 0.4,       // Flavor has 100% weight
-        compounds: 0.3,     // Compounds disabled
-        processing: 0.2,    // Processing disabled
-        geography: 0.1      // Geography disabled
-        // teaType property completely removed to ensure it never affects calculations
-      },
+        flavor: 0.4,       // Flavor has highest weight (40%)
+        compounds: 0.3,     // Compounds have significant weight (30%)  
+        processing: 0.2,    // Processing methods have moderate weight (20%)
+        geography: 0.1      // Geography has lowest weight (10%)
+     },
       
       // Processing configuration
       processing: {
@@ -130,62 +125,6 @@ export class TcmSystemConfig {
     
     // Ensure element weights still sum to 1.0 after updates
     this._normalizeElementWeights();
-  }
-  
-  /**
-   * Reset configuration to defaults
-   */
-  reset() {
-    this.config = {
-      elementWeights: {
-        flavor: 1,      // Flavor has 100% weight
-        compounds: 0,   // Compounds disabled
-        processing: 0,  // Processing disabled
-        geography: 0    // Geography disabled
-        // teaType property completely removed
-      },
-      processing: {
-        ignoreProcessingMethods: true
-      },
-      elementInteractions: {
-        enabled: false,
-        generatingStrength: 0.1,
-        controllingStrength: 0.05,
-        antagonisticStrength: 0.03
-      },
-      compounds: {
-        idealLTheanineCaffeineRatio: 2.0,
-        highCaffeineThreshold: 6.5,
-        highLTheanineThreshold: 7.0,
-        compoundImbalancePenalty: 0.15
-      },
-      diminishingReturns: {
-        formula: 'Math.pow(count, -0.3)'
-      },
-      terminology: {
-        system: "TCM Tea Classification",
-        elements: "Five Elements (五行 Wǔxíng)",
-        effects: "Energetic Effects",
-        properties: "TCM Properties"
-      },
-      analysisDepth: {
-        includeChineseTerms: true,
-        includeBodySystems: true,
-        includeContraindications: true,
-        maxEffectsToShow: 5,
-        maxBenefitsToShow: 4
-      },
-      visualization: {
-        woodColor: "#4CAF50",
-        fireColor: "#F44336",
-        earthColor: "#FFC107",
-        metalColor: "#9E9E9E",
-        waterColor: "#2196F3",
-        minScoreToHighlight: 0.25,
-        radarChartScale: 10,
-        showElementContributions: true
-      }
-    };
   }
   
   /**

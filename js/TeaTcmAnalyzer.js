@@ -684,17 +684,10 @@ export class TeaTcmAnalyzer {
   }
   
   /**
-   * Update system configuration
+   * Update configuration with provided options
    */
   updateConfig(configUpdates) {
     this.config.update(configUpdates);
-  }
-  
-  /**
-   * Reset configuration to default values
-   */
-  resetConfig() {
-    this.config.reset();
   }
   
   /**
