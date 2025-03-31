@@ -786,4 +786,338 @@ input[type="range"] {
     color: #2196F3; /* Blue */
   }
   
-  /* Harmony level indicators
+  /* Harmony level indicators */
+
+/* Calculation Breakdown Panel */
+.calculation-breakdown-panel {
+    margin-bottom: 20px;
+}
+
+.panel-header-collapsible {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    padding: 5px;
+}
+
+.toggle-button.active i {
+    transform: rotate(180deg);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease;
+}
+
+.collapsible-content.visible {
+    max-height: 100%; /* Large enough to accommodate all content */
+}
+
+.calculation-explanation {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    font-style: italic;
+}
+
+/* Component Weights */
+.component-weights {
+    margin-bottom: 20px;
+}
+
+.component-weight-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.component-label {
+    width: 140px;
+    font-weight: 500;
+}
+
+.component-value {
+    width: 50px;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Component Element Distributions */
+.component-elements {
+    margin-bottom: 20px;
+}
+
+.component-element-card {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.component-element-card h5 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+
+/* Element Contribution Table */
+.element-contribution-table {
+    overflow-x: auto;
+}
+
+#element-contribution-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#element-contribution-table th,
+#element-contribution-table td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+#element-contribution-table th {
+    background-color: #f2f2f2;
+    font-weight: 600;
+}
+
+#element-contribution-table th:first-child,
+#element-contribution-table td:first-child {
+    text-align: left;
+}
+
+#element-contribution-table tfoot tr {
+    font-weight: 600;
+    background-color: #f9f9f9;
+}
+
+/* Progress Bar Colors */
+.flavor-bar {
+    background-color: #4CAF50;
+}
+
+.compounds-bar {
+    background-color: #2196F3;
+}
+
+.processing-bar {
+    background-color: #FF9800;
+}
+
+.geography-bar {
+    background-color: #9C27B0;
+}
+
+/* Calculation Formula Styles */
+.formula-explanation {
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.formula-explanation h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.formula {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.formula-component {
+    padding: 6px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.formula-operator {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0 2px;
+}
+
+.flavor-component {
+    background-color: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.compounds-component {
+    background-color: rgba(33, 150, 243, 0.2);
+    border: 1px solid rgba(33, 150, 243, 0.4);
+}
+
+.processing-component {
+    background-color: rgba(255, 152, 0, 0.2);
+    border: 1px solid rgba(255, 152, 0, 0.4);
+}
+
+.geography-component {
+    background-color: rgba(156, 39, 176, 0.2);
+    border: 1px solid rgba(156, 39, 176, 0.4);
+}
+
+/* Component Factors Styles */
+.component-factors {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 6px;
+}
+
+.factors-intro {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.factors-list {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.factors-list li {
+    margin-bottom: 5px;
+}
+
+/* Compound-Element mapping styles */
+.compound-element-mapping {
+    display: block;
+    margin: 8px 0;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+    line-height: 1.6;
+}
+
+.ratio-explanation {
+    font-size: 0.9em;
+    font-style: italic;
+    color: #555;
+    margin-left: 5px;
+}
+
+.distribution-header {
+    margin-top: 15px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+/* Element Component Breakdown */
+.element-component-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.element-component-card {
+    flex: 1 1 220px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+}
+
+.element-component-card h6 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.element-mini-bar {
+    height: 4px;
+    margin-bottom: 5px;
+}
+
+.wood-mini-bar { background-color: #4CAF50; }
+.fire-mini-bar { background-color: #F44336; }
+.earth-mini-bar { background-color: #FFC107; }
+.metal-mini-bar { background-color: #9E9E9E; }
+.water-mini-bar { background-color: #2196F3; }
+
+/* Thermal property and TCM cycles styles */
+.thermal-property {
+  margin: 10px 0;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+}
+
+.thermal-quality {
+  font-weight: 500;
+  color: #e67e22;
+}
+
+.thermal-explanation {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 10px;
+}
+
+/* New thermal table and components styles */
+.thermal-breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  font-size: 0.9rem;
+}
+
+.thermal-breakdown-table th,
+.thermal-breakdown-table td {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.thermal-breakdown-table th {
+  background-color: #f3f3f3;
+  font-weight: 500;
+}
+
+.thermal-breakdown-table .total-row {
+  font-weight: 600;
+  background-color: #f8f8f8;
+}
+
+.positive-thermal {
+  color: #e74c3c; /* Warm - reddish */
+}
+
+.negative-thermal {
+  color: #2980b9; /* Cool - bluish */
+}
+
+.contribution-card .thermal-quality {
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background-color: rgba(230, 126, 34, 0.1);
+}

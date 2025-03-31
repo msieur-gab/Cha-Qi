@@ -97,6 +97,13 @@ export class TeaTcmAnalyzer {
       elementSignature: effectProfile.elementSignature,
       elementContributions: elementAnalysis.contributions,
       
+      // Thermal analysis
+      thermal: {
+        thermalProperty: elementAnalysis.thermalAnalysis.thermalProperty,
+        thermalValue: elementAnalysis.thermalAnalysis.totalThermal,
+        componentContributions: elementAnalysis.thermalAnalysis.components
+      },
+      
       // Effect profile
       effect: {
         name: effectProfile.name,
@@ -816,18 +823,18 @@ export class TeaTcmAnalyzer {
 
 // Factory function to create analyzer with default configuration
 export function createAnalyzer(configOptions = {}) {
-  // Set the default configuration to match the hierarchical test
-  const hierarchicalConfig = {
+  // Set the default configuration with balanced component weights
+  const defaultConfig = {
     elementWeights: {
-      flavor: 1,       // Flavor has 100% weight
-      compounds: 0,     // Set other weights to 0
-      processing: 0,    
-      geography: 0      
+      flavor: 0.4,      // 40% weight for flavor
+      compounds: 0.3,    // 30% weight for compounds
+      processing: 0.2,   // 20% weight for processing
+      geography: 0.1     // 10% weight for geography
     }
   };
   
   // Merge with user-provided options
-  const mergedConfig = { ...hierarchicalConfig, ...configOptions };
+  const mergedConfig = { ...defaultConfig, ...configOptions };
   
   return new TeaTcmAnalyzer(mergedConfig);
 }

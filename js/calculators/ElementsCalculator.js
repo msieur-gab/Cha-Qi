@@ -2,6 +2,7 @@
 // Core calculator that combines all element mappings with appropriate weights
 
 import { elementDefinitions, elementRelationships } from '../data/ElementDefinitions.js';
+import ThermalFactorCalculator from './ThermalFactorCalculator.js';
 
 export class ElementsCalculator {
   constructor(config, flavorMapper, compoundMapper, processingMapper, geographyMapper) {
@@ -10,6 +11,9 @@ export class ElementsCalculator {
     this.compoundMapper = compoundMapper;
     this.processingMapper = processingMapper;
     this.geographyMapper = geographyMapper;
+    
+    // Initialize thermal factor calculator
+    this.thermalCalculator = new ThermalFactorCalculator(this.config);
   }
   
   /**
@@ -93,8 +97,17 @@ export class ElementsCalculator {
     // Combine element scores with proper weighting
     const combinedElements = this._combineElementScores(weightedElements);
     
+    // Calculate thermal factors and analysis
+    const thermalAnalysis = this.thermalCalculator.calculateTotalThermal(tea);
+    
+    // Apply thermal adjustments to elements
+    const thermalAdjustedElements = this.thermalCalculator.applyThermalAdjustments(
+      combinedElements, 
+      thermalAnalysis.totalThermal
+    );
+    
     // Apply element interactions based on generating and controlling cycles
-    const adjustedElements = this._applyElementInteractions(combinedElements);
+    const adjustedElements = this._applyElementInteractions(thermalAdjustedElements);
     
     // Identify dominant and supporting elements
     console.log("Adjusted elements before sorting:", adjustedElements);
@@ -134,6 +147,7 @@ export class ElementsCalculator {
     return {
       elements: adjustedElements,
       rawElements: combinedElements,
+      thermalAdjustedElements: thermalAdjustedElements,
       dominantElement,
       supportingElement,
       elementPair: dominantElement && supportingElement ? `${dominantElement}+${supportingElement}` : null,
@@ -144,7 +158,8 @@ export class ElementsCalculator {
         compounds: compoundElements || this._getZeroElements(),
         processing: processingElements || this._getZeroElements(),
         geography: geographyElements || this._getZeroElements()
-      }
+      },
+      thermalAnalysis: thermalAnalysis  // Add thermal analysis to the result
     };
   }
   

@@ -219,6 +219,99 @@
                         </div>
                     </div>
                     
+                    <!-- Calculation Breakdown Panel (New) -->
+                    <div class="panel calculation-breakdown-panel">
+                        <div class="panel-header-collapsible">
+                            <h3>Calculation Breakdown</h3>
+                            <button id="calculation-toggle" class="toggle-button">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <div id="calculation-content" class="collapsible-content hidden">
+                            <div class="calculation-explanation">
+                                <p>This visualization shows how each component contributes to the final element distribution. Components are weighted based on their importance to the overall analysis.</p>
+                            </div>
+                            
+                            <div class="calculation-details">
+                                <!-- Content will be dynamically inserted here -->
+                            </div>
+                            
+                            <div id="calculation-formula">
+                                <!-- Formula will be dynamically inserted here -->
+                            </div>
+                            
+                            <div class="component-weights">
+                                <h4>Component Weights</h4>
+                                <div class="component-weight-container">
+                                    <span class="component-label">Flavor Profile</span>
+                                    <div class="progress-bar">
+                                        <div id="flavor-weight-bar" class="progress flavor-bar" style="width: 40%"></div>
+                                    </div>
+                                    <span id="flavor-weight-value" class="component-value">40%</span>
+                                </div>
+                                <div class="component-weight-container">
+                                    <span class="component-label">Compounds</span>
+                                    <div class="progress-bar">
+                                        <div id="compounds-weight-bar" class="progress compounds-bar" style="width: 30%"></div>
+                                    </div>
+                                    <span id="compounds-weight-value" class="component-value">30%</span>
+                                </div>
+                                <div class="component-weight-container">
+                                    <span class="component-label">Processing</span>
+                                    <div class="progress-bar">
+                                        <div id="processing-weight-bar" class="progress processing-bar" style="width: 20%"></div>
+                                    </div>
+                                    <span id="processing-weight-value" class="component-value">20%</span>
+                                </div>
+                                <div class="component-weight-container">
+                                    <span class="component-label">Geography</span>
+                                    <div class="progress-bar">
+                                        <div id="geography-weight-bar" class="progress geography-bar" style="width: 10%"></div>
+                                    </div>
+                                    <span id="geography-weight-value" class="component-value">10%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="component-elements">
+                                <h4>Component Element Distributions</h4>
+                                <div id="component-element-breakdown">
+                                    <!-- Will be populated with component breakdowns -->
+                                </div>
+                            </div>
+                            
+                            <div class="element-contributions">
+                                <h4>Element Contribution Breakdown</h4>
+                                <div class="element-contribution-table">
+                                    <table id="element-contribution-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Component</th>
+                                                <th>Wood</th>
+                                                <th>Fire</th>
+                                                <th>Earth</th>
+                                                <th>Metal</th>
+                                                <th>Water</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="element-contribution-tbody">
+                                            <!-- Dynamically populated -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>Final (Weighted)</th>
+                                                <td id="wood-final">0%</td>
+                                                <td id="fire-final">0%</td>
+                                                <td id="earth-final">0%</td>
+                                                <td id="metal-final">0%</td>
+                                                <td id="water-final">0%</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Seasonal Appropriateness Panel -->
                     <div class="panel seasonality-panel">
                         <h3>Seasonal Appropriateness</h3>
