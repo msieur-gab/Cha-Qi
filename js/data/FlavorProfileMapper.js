@@ -258,7 +258,18 @@ export class FlavorProfileMapper {
       "fish": "marine",     // Added based on TCM Flavor Wheel
       "seafood": "marine",  // Added based on TCM Flavor Wheel
       
-      // Added umami-related terms to umami category
+      // Caramel notes
+      "caramel": "caramel",
+      "toffee": "caramel",
+      "butterscotch": "caramel",
+      "burnt sugar": "caramel",
+      "brown sugar": "caramel",
+      "molasses": "caramel",
+      "honey": "caramel",
+      "malty": "caramel", // Added malty to caramel category
+      "malt": "caramel",  // Added malt to caramel category
+      
+      // Umami-related terms
       "umami": "umami",
       "savory": "umami",
       "brothy": "umami",
@@ -732,6 +743,12 @@ export class FlavorProfileMapper {
     if (normalizedFlavor === "malty" && context && this.profileContainsAny(context, ["roasted", "toast", "roast"])) {
       // When malty appears with roasted notes, adjust to have Fire (bitter) component
       return { earth: 0.6, fire: 0.4, wood: 0.0, metal: 0.0, water: 0.0 };
+    }
+    
+    // Special case for "malty" alone
+    if (normalizedFlavor === "malty") {
+      // When malty appears alone, it has a primarily Earth (sweet) element
+      return { earth: 0.95, fire: 0.0, wood: 0.05, metal: 0.0, water: 0.0 };
     }
     
     // Special case for umami in Japanese green teas - strengthened

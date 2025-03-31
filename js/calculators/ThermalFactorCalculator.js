@@ -1,6 +1,8 @@
 // ThermalFactorCalculator.js
 // Calculates thermal contributions from various tea components and applies thermal adjustments
 
+import { ThermalMappings } from '../data/ThermalMappings.js';
+
 export class ThermalFactorCalculator {
   constructor(config = {}) {
     // Configuration
@@ -10,106 +12,10 @@ export class ThermalFactorCalculator {
       ...config
     };
     
-    // Flavor thermal mappings (TCM basis)
-    this.flavorThermalMappings = {
-      // TCM Flavor mappings
-      bitter: -0.3,  // Cooling
-      sweet: 0.2,    // Warming
-      sour: -0.2,    // Cooling
-      pungent: 0.3,  // Warming
-      salty: -0.1,   // Mildly cooling
-      
-      // Category mappings derived from TCM flavors
-      fruity: 0.1,      // Generally warming (sweet with sour)
-      floral: 0.0,      // Neutral (pungent with sweet)
-      vegetal: -0.3,    // Cooling (bitter with sweet)
-      green_vegetal: -0.3, // Cooling (sour with bitter)
-      spicy: 0.4,       // Strongly warming (pungent)
-      woody: -0.2,      // Cooling (bitter with sour)
-      earthy: 0.0,      // Neutral (sweet with salty)
-      nutty: 0.2,       // Warming (sweet with bitter)
-      animal: 0.1,      // Mildly warming (salty with bitter)
-      marine: -0.2,     // Cooling (salty with sour)
-      mineral: -0.2,    // Cooling (salty with pungent)
-      roasted: 0.3,     // Warming (bitter with sweet)
-      citrus: -0.3,     // Cooling (sour with sweet)
-      aged: 0.1,        // Mildly warming (sweet with bitter)
-      tobacco: 0.2,     // Warming (bitter with pungent)
-      caramel: 0.3,     // Warming (sweet with bitter)
-      umami: -0.2       // Cooling (salty with sour)
-    };
-    
-    // Processing thermal mappings
-    this.processingThermalMappings = {
-      // Oxidation levels
-      "non-oxidized": -0.3,
-      "minimally-oxidized": -0.3,
-      "lightly-oxidized": -0.2,
-      "medium-oxidized": 0.0,
-      "highly-oxidized": 0.3,
-      "fully-oxidized": 0.4,
-      
-      // Heat application methods
-      "steamed": -0.2,
-      "pan-fired": 0.2,
-      "baked": 0.3,
-      "roasted": 0.4,
-      "charcoal-roasted": 0.5,
-      "heavily-roasted": 0.6,
-      "smoke-dried": 0.5,
-      
-      // Drying methods
-      "sun-dried": 0.1,
-      "shade-dried": -0.2,
-      "oven-dried": 0.2,
-      
-      // Special processing methods
-      "withered": -0.1,
-      "fermented": 0.2,
-      "aged": 0.1,
-      "post-fermented": 0.2,
-      "pile-fermented": 0.3,
-      "wet-piled": 0.2,
-      "yellowing": -0.1,
-      
-      // Specialty processing
-      "shade-grown": -0.3,
-      "bug-bitten": 0.0,
-      "gaba-processed": -0.1,
-      "kill-green": -0.1,
-      "ground": 0.1,
-      "CTC": 0.2,
-      "orthodox": 0.0,
-      "minimal-processing": -0.2
-    };
-    
-    // Geography thermal mappings
-    this.geographyThermalMappings = {
-      // Climate types
-      "tropical": 0.3,
-      "subtropical": 0.2,
-      "temperate": 0.0,
-      "alpine": -0.2,
-      "arid": 0.2,
-      "humid": -0.1,
-      
-      // Altitude
-      "high-altitude": -0.2,
-      "low-altitude": 0.1,
-      "medium-altitude": 0.0,
-      
-      // Region (examples)
-      "india-assam": 0.3,   // Hot, humid lowlands
-      "india-darjeeling": -0.1, // Cooler high mountains
-      "china-fujian": 0.1,
-      "china-yunnan": 0.1,
-      "japan": -0.2,
-      "taiwan": 0.0,
-      "kenya": 0.1,
-      "sri-lanka": 0.2
-    };
-    
-    // Compound thermal mappings are handled directly in the calculations
+    // Initialize thermal mappings from imported data
+    this.flavorThermalMappings = ThermalMappings.flavor;
+    this.processingThermalMappings = ThermalMappings.processing;
+    this.geographyThermalMappings = ThermalMappings.geography;
   }
   
   /**
@@ -211,8 +117,8 @@ export class ThermalFactorCalculator {
     const lTheanine = Math.max(1, Math.min(10, lTheanineLevel || 5));
     
     // Caffeine is warming, L-theanine is cooling
-    // Formula similar to the existing compound element mapper
-    return (caffeine * 0.1) - (lTheanine * 0.15);
+    // Formula based on TCM principles
+    return (caffeine * 0.1) - (lTheanine * 0.07);
   }
   
   /**
@@ -229,37 +135,57 @@ export class ThermalFactorCalculator {
     let totalThermal = 0;
     let matchCount = 0;
     
-    // Extract relevant geography properties
-    const properties = [
-      geography.climate,
-      geography.region,
-      geography.altitude,
-      geography.country,
-      geography.terrain
-    ].filter(prop => prop); // Filter out undefined properties
-    
-    // Try to match each property to thermal mappings
-    properties.forEach(prop => {
-      if (typeof prop !== 'string') return;
-      
-      const normalizedProp = prop.toLowerCase().trim()
-        .replace(/\s+/g, '-'); // Standardize format
-      
-      // Check for direct match
-      if (this.geographyThermalMappings[normalizedProp] !== undefined) {
-        totalThermal += this.geographyThermalMappings[normalizedProp];
+    // Altitude contribution (higher = cooler)
+    if (geography.altitude !== undefined) {
+      // Convert altitude to thermal score
+      if (geography.altitude > 1500) {
+        totalThermal += -0.3; // High altitude: cooling
+        matchCount++;
+      } else if (geography.altitude > 800) {
+        totalThermal += -0.1; // Medium-high altitude: slightly cooling
+        matchCount++;
+      } else if (geography.altitude > 300) {
+        totalThermal += 0; // Medium altitude: neutral
         matchCount++;
       } else {
-        // Try to find a partial match
-        for (const [mappedProp, thermalValue] of Object.entries(this.geographyThermalMappings)) {
-          if (normalizedProp.includes(mappedProp) || mappedProp.includes(normalizedProp)) {
-            totalThermal += thermalValue;
-            matchCount++;
-            break;
-          }
-        }
+        totalThermal += 0.1; // Low altitude: slightly warming
+        matchCount++;
       }
-    });
+    }
+    
+    // Temperature contribution
+    if (geography.temperature !== undefined) {
+      if (geography.temperature > 25) {
+        totalThermal += 0.3; // Hot: warming
+        matchCount++;
+      } else if (geography.temperature > 18) {
+        totalThermal += 0.1; // Warm: slightly warming
+        matchCount++;
+      } else if (geography.temperature > 12) {
+        totalThermal += 0; // Moderate: neutral
+        matchCount++;
+      } else {
+        totalThermal += -0.2; // Cool: cooling
+        matchCount++;
+      }
+    }
+    
+    // Humidity contribution
+    if (geography.humidity !== undefined) {
+      if (geography.humidity > 80) {
+        totalThermal += -0.2; // Very humid: cooling
+        matchCount++;
+      } else if (geography.humidity > 60) {
+        totalThermal += -0.1; // Humid: slightly cooling
+        matchCount++;
+      } else if (geography.humidity > 40) {
+        totalThermal += 0; // Moderate: neutral
+        matchCount++;
+      } else {
+        totalThermal += 0.2; // Dry: warming
+        matchCount++;
+      }
+    }
     
     // Return average thermal value, or 0 if no matches
     return matchCount > 0 ? totalThermal / matchCount : 0;
@@ -322,41 +248,72 @@ export class ThermalFactorCalculator {
     }
     
     // Calculate weighted total thermal value
-    const totalThermal = 
-      (flavorThermal * normalizedFactors.flavor) +
-      (processingThermal * normalizedFactors.processing) +
-      (compoundThermal * normalizedFactors.compound) +
-      (geographyThermal * normalizedFactors.geography);
+    let totalThermal = 0;
+    const components = {
+      flavor: {
+        value: flavorThermal,
+        weight: normalizedFactors.flavor || 0,
+        contribution: flavorThermal * (normalizedFactors.flavor || 0)
+      },
+      processing: {
+        value: processingThermal,
+        weight: normalizedFactors.processing || 0,
+        contribution: processingThermal * (normalizedFactors.processing || 0)
+      },
+      compound: {
+        value: compoundThermal,
+        weight: normalizedFactors.compound || 0,
+        contribution: compoundThermal * (normalizedFactors.compound || 0)
+      },
+      geography: {
+        value: geographyThermal,
+        weight: normalizedFactors.geography || 0,
+        contribution: geographyThermal * (normalizedFactors.geography || 0)
+      }
+    };
     
-    // Determine thermal property based on total value
+    // Sum all component contributions
+    totalThermal = Object.values(components).reduce(
+      (sum, component) => sum + component.contribution, 0
+    );
+    
+    // Get thermal property description
     const thermalProperty = this._getThermalProperty(totalThermal);
     
-    // Return thermal analysis
+    // Create thermal effects based on property
+    const effects = this._generateThermalEffects(thermalProperty, totalThermal);
+    
+    // Create component contributions - this is needed for the UI display
+    const componentContributions = {
+      flavor: {
+        value: flavorThermal,
+        weight: normalizedFactors.flavor || 0,
+        contribution: flavorThermal * (normalizedFactors.flavor || 0)
+      },
+      processing: {
+        value: processingThermal,
+        weight: normalizedFactors.processing || 0,
+        contribution: processingThermal * (normalizedFactors.processing || 0)
+      },
+      compound: {
+        value: compoundThermal,
+        weight: normalizedFactors.compound || 0,
+        contribution: compoundThermal * (normalizedFactors.compound || 0)
+      },
+      geography: {
+        value: geographyThermal,
+        weight: normalizedFactors.geography || 0,
+        contribution: geographyThermal * (normalizedFactors.geography || 0)
+      }
+    };
+    
+    // Return comprehensive thermal analysis
     return {
       totalThermal,
       thermalProperty,
-      components: {
-        flavor: {
-          value: flavorThermal,
-          weight: normalizedFactors.flavor,
-          contribution: flavorThermal * normalizedFactors.flavor
-        },
-        processing: {
-          value: processingThermal,
-          weight: normalizedFactors.processing,
-          contribution: processingThermal * normalizedFactors.processing
-        },
-        compound: {
-          value: compoundThermal,
-          weight: normalizedFactors.compound,
-          contribution: compoundThermal * normalizedFactors.compound
-        },
-        geography: {
-          value: geographyThermal,
-          weight: normalizedFactors.geography,
-          contribution: geographyThermal * normalizedFactors.geography
-        }
-      }
+      effects,
+      components,
+      componentContributions
     };
   }
   
@@ -411,13 +368,63 @@ export class ThermalFactorCalculator {
       adjustedElements.earth += 0.03 * adjustmentFactor; // Slightly enhance Earth for neutral teas
     }
     
+    // Normalize the elements to ensure they sum to 1.0
+    const total = Object.values(adjustedElements).reduce((sum, val) => sum + val, 0);
+    if (total > 0) {
+      Object.keys(adjustedElements).forEach(element => {
+        adjustedElements[element] = adjustedElements[element] / total;
+      });
+    }
+    
     return adjustedElements;
   }
   
   /**
-   * Determine thermal property description based on total thermal value
+   * Generate thermal effects based on the thermal property
    * 
-   * @param {number} thermalValue - Total thermal value (-1 to 1 scale)
+   * @param {string} thermalProperty - The thermal property description
+   * @param {number} thermalValue - The thermal value
+   * @returns {string[]} Array of thermal effects
+   */
+  _generateThermalEffects(thermalProperty, thermalValue) {
+    const effects = [];
+    
+    if (thermalValue < -0.5) {
+      // Strongly cooling
+      effects.push('Cools the body and clears heat');
+      effects.push('Helps reduce inflammation and fever');
+      effects.push('Particularly beneficial in hot weather');
+      effects.push('Good for people with heat conditions');
+    } else if (thermalValue < -0.2) {
+      // Mildly cooling
+      effects.push('Gently cools the body');
+      effects.push('Helps moderate excess heat');
+      effects.push('Good for warm weather hydration');
+    } else if (thermalValue > 0.5) {
+      // Strongly warming
+      effects.push('Warms the body from the core');
+      effects.push('Promotes circulation and dispels cold');
+      effects.push('Particularly beneficial in cold weather');
+      effects.push('Good for people with cold conditions');
+    } else if (thermalValue > 0.2) {
+      // Mildly warming
+      effects.push('Gently warms the body');
+      effects.push('Supports digestion and metabolism');
+      effects.push('Good for cool weather consumption');
+    } else {
+      // Neutral
+      effects.push('Balanced thermal effect on the body');
+      effects.push('Suitable for most constitutions');
+      effects.push('Good for regular consumption in any season');
+    }
+    
+    return effects;
+  }
+  
+  /**
+   * Get thermal property description based on thermal value
+   * 
+   * @param {number} thermalValue - Thermal value (-1 to 1 scale)
    * @returns {string} Thermal property description
    */
   _getThermalProperty(thermalValue) {
@@ -431,4 +438,4 @@ export class ThermalFactorCalculator {
   }
 }
 
-export default ThermalFactorCalculator; 
+export default ThermalFactorCalculator;

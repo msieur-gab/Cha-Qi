@@ -216,6 +216,86 @@ export function displaySeasonalityInfo(seasonality, dominantElement) {
 }
 
 /**
+ * Display thermal properties in the UI
+ * @param {Object} thermalData - Thermal properties data
+ */
+export function displayThermalProperties(thermalData) {
+  if (!thermalData) return;
+  
+  // Get the thermal properties container
+  const thermalContainer = document.getElementById('thermal-properties');
+  
+  // If container doesn't exist, log error and return
+  if (!thermalContainer) {
+    console.error('Thermal properties container not found');
+    return;
+  }
+  
+  // Set thermal property
+  document.getElementById('thermal-property').textContent = thermalData.thermalProperty || 'Neutral';
+  
+  // Set thermal value
+  const thermalValue = document.getElementById('thermal-value');
+  if (thermalValue) {
+    const formattedValue = thermalData.totalThermal.toFixed(2);
+    thermalValue.textContent = formattedValue;
+    
+    // Add class based on thermal value
+    thermalValue.className = '';
+    if (thermalData.totalThermal > 0.2) {
+      thermalValue.classList.add('warm-thermal');
+    } else if (thermalData.totalThermal < -0.2) {
+      thermalValue.classList.add('cool-thermal');
+    } else {
+      thermalValue.classList.add('neutral-thermal');
+    }
+  }
+  
+  // Set thermal effects
+  const effectsList = document.getElementById('thermal-effects-list');
+  if (effectsList) {
+    // Clear existing items
+    effectsList.innerHTML = '';
+    
+    if (thermalData.effects && thermalData.effects.length > 0) {
+      thermalData.effects.forEach(effect => {
+        const li = document.createElement('li');
+        li.textContent = effect;
+        effectsList.appendChild(li);
+      });
+    } else {
+      // Generate default effects based on thermal property
+      const defaultEffects = [];
+      
+      if (thermalData.totalThermal < -0.2) {
+        // Cooling effects
+        defaultEffects.push('Cools the body');
+        defaultEffects.push('Helps reduce heat and inflammation');
+        defaultEffects.push('Good for hot weather or heat conditions');
+      } else if (thermalData.totalThermal > 0.2) {
+        // Warming effects
+        defaultEffects.push('Warms the body');
+        defaultEffects.push('Helps improve circulation');
+        defaultEffects.push('Good for cold weather or cold conditions');
+      } else {
+        // Neutral effects
+        defaultEffects.push('Balanced thermal effect on the body');
+        defaultEffects.push('Good for general consumption in any weather');
+      }
+      
+      defaultEffects.forEach(effect => {
+        const li = document.createElement('li');
+        li.textContent = effect;
+        effectsList.appendChild(li);
+      });
+    }
+  }
+
+  // Display the thermal container
+  thermalContainer.classList.remove('hidden');
+}
+
+/**
  * Set component contributions in the UI
  * @param {Object} analysis - Tea analysis result
  */
@@ -284,10 +364,14 @@ export function setComponentContributions(analysis) {
       `This tea has a ${analysis.thermal.thermalProperty.toLowerCase()} thermal nature that influences its effects on the body.`,
       [
         `Thermal Property: ${analysis.thermal.thermalProperty}`,
-        `Flavor Contribution: ${analysis.thermal.componentContributions.flavor ? formatPercentage(analysis.thermal.componentContributions.flavor.contribution * 100) : 'Not analyzed'}`,
-        `Processing Contribution: ${analysis.thermal.componentContributions.processing ? formatPercentage(analysis.thermal.componentContributions.processing.contribution * 100) : 'Not analyzed'}`,
-        `Compound Contribution: ${analysis.thermal.componentContributions.compound ? formatPercentage(analysis.thermal.componentContributions.compound.contribution * 100) : 'Not analyzed'}`,
-        `Geography Contribution: ${analysis.thermal.componentContributions.geography ? formatPercentage(analysis.thermal.componentContributions.geography.contribution * 100) : 'Not analyzed'}`
+        `Flavor Contribution: ${analysis.thermal.componentContributions?.flavor?.contribution !== undefined ? 
+          (analysis.thermal.componentContributions.flavor.contribution * 100).toFixed(1) + '%' : 'Not analyzed'}`,
+        `Processing Contribution: ${analysis.thermal.componentContributions?.processing?.contribution !== undefined ? 
+          (analysis.thermal.componentContributions.processing.contribution * 100).toFixed(1) + '%' : 'Not analyzed'}`,
+        `Compound Contribution: ${analysis.thermal.componentContributions?.compound?.contribution !== undefined ? 
+          (analysis.thermal.componentContributions.compound.contribution * 100).toFixed(1) + '%' : 'Not analyzed'}`,
+        `Geography Contribution: ${analysis.thermal.componentContributions?.geography?.contribution !== undefined ? 
+          (analysis.thermal.componentContributions.geography.contribution * 100).toFixed(1) + '%' : 'Not analyzed'}`
       ],
       'fas fa-thermometer-half'
     );
@@ -678,8 +762,11 @@ export function displayCalculationBreakdown(analysis) {
   console.log('Calculation breakdown display complete');
 }
 
-// NEW: Function to display thermal calculation breakdown
-function displayThermalCalculationBreakdown(analysis) {
+/**
+ * Display thermal calculation breakdown in the UI
+ * @param {Object} analysis - Tea analysis result
+ */
+export function displayThermalCalculationBreakdown(analysis) {
   if (!analysis.thermal) return;
   
   const detailsContainer = document.querySelector('.calculation-details');
@@ -700,7 +787,7 @@ function displayThermalCalculationBreakdown(analysis) {
   // Create description
   const thermalDesc = document.createElement('p');
   thermalDesc.innerHTML = `This tea has a <span class="thermal-quality">${analysis.thermal.thermalProperty}</span> thermal nature 
-    with a thermal value of <strong>${analysis.thermal.thermalValue.toFixed(2)}</strong> (range: -1 to +1).
+    with a thermal value of <strong>${analysis.thermal.totalThermal.toFixed(2)}</strong> (range: -1 to +1).
     Thermal properties emerge from all tea components and affect the Five Element distribution.`;
   thermalSection.appendChild(thermalDesc);
   
@@ -718,7 +805,7 @@ function displayThermalCalculationBreakdown(analysis) {
   thermalTable.appendChild(headerRow);
   
   // Add component rows
-  const components = analysis.thermal.componentContributions;
+  const components = analysis.thermal.components;
   Object.entries(components).forEach(([component, data]) => {
     if (data.value !== 0) {
       const row = document.createElement('tr');
@@ -761,8 +848,8 @@ function displayThermalCalculationBreakdown(analysis) {
   // Total value
   const totalValue = document.createElement('td');
   totalValue.colSpan = 3;
-  totalValue.textContent = analysis.thermal.thermalValue.toFixed(2);
-  totalValue.className = analysis.thermal.thermalValue > 0 ? 'positive-thermal' : analysis.thermal.thermalValue < 0 ? 'negative-thermal' : '';
+  totalValue.textContent = analysis.thermal.totalThermal.toFixed(2);
+  totalValue.className = analysis.thermal.totalThermal > 0 ? 'positive-thermal' : analysis.thermal.totalThermal < 0 ? 'negative-thermal' : '';
   totalRow.appendChild(totalValue);
   
   thermalTable.appendChild(totalRow);
@@ -777,14 +864,14 @@ function displayThermalCalculationBreakdown(analysis) {
   // Add element adjustment list
   const thermalEffectsList = document.createElement('ul');
   
-  if (analysis.thermal.thermalValue < -0.2) {
+  if (analysis.thermal.totalThermal < -0.2) {
     // Cooling effects
     thermalEffectsList.innerHTML = `
       <li>Reduced <span class="element-fire">Fire</span> element (cooling effect)</li>
       <li>Enhanced <span class="element-water">Water</span> element (yin nourishment)</li>
       <li>Slightly enhanced <span class="element-metal">Metal</span> element (purifying quality)</li>
     `;
-  } else if (analysis.thermal.thermalValue > 0.2) {
+  } else if (analysis.thermal.totalThermal > 0.2) {
     // Warming effects
     thermalEffectsList.innerHTML = `
       <li>Enhanced <span class="element-fire">Fire</span> element (warming effect)</li>

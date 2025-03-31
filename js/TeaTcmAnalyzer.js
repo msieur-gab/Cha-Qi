@@ -3,11 +3,12 @@
 
 import TcmSystemConfig from './config/TcmSystemConfig.js';
 import {ElementsCalculator} from './calculators/ElementsCalculator.js';
-import FlavorProfileMapper from './data/FlavorProfileMapper.js';
+// Update import path for FlavorProfileMapper
+import FlavorProfileMapper from './calculators/FlavorProfileMapper.js';
 import {CompoundElementMapper} from './calculators/CompoundElementMapper.js';
 import {ProcessingElementMapper} from './calculators/ProcessingElementMapper.js';
 import {GeographyElementMapper} from './calculators/GeographyElementMapper.js';
-import EffectsDeriver from './calculators/EffectsDeriver.js';
+import {EffectsDeriver} from './calculators/EffectsDeriver.js';
 
 import processingElementMappings from './data/ProcessingElementMappings.js';
 import elementCombinationEffects from './data/ElementCombinationEffects.js';
@@ -18,7 +19,7 @@ export class TeaTcmAnalyzer {
     // Initialize system configuration
     this.config = new TcmSystemConfig(configOptions);
     
-    // Initialize component mappers
+    // Initialize component mappers with updated FlavorProfileMapper location
     this.flavorMapper = new FlavorProfileMapper();
     
     this.compoundMapper = new CompoundElementMapper(
@@ -97,12 +98,8 @@ export class TeaTcmAnalyzer {
       elementSignature: effectProfile.elementSignature,
       elementContributions: elementAnalysis.contributions,
       
-      // Thermal analysis
-      thermal: {
-        thermalProperty: elementAnalysis.thermalAnalysis.thermalProperty,
-        thermalValue: elementAnalysis.thermalAnalysis.totalThermal,
-        componentContributions: elementAnalysis.thermalAnalysis.components
-      },
+      // Thermal analysis - now included properly
+      thermal: elementAnalysis.thermalAnalysis,
       
       // Effect profile
       effect: {
@@ -136,6 +133,7 @@ export class TeaTcmAnalyzer {
       rawEffectProfile: effectProfile
     };
   }
+  
   /**
    * Generate component-specific analyses
    */
@@ -151,7 +149,9 @@ export class TeaTcmAnalyzer {
     if (tea.caffeineLevel !== undefined && tea.lTheanineLevel !== undefined) {
       analyses.compounds = this.compoundMapper.analyzeCompoundBalance(
         tea.caffeineLevel, 
-        tea.lTheanineLevel
+        tea.lTheanineLevel,
+        // Check if tea is shade-grown
+        tea.processingMethods && tea.processingMethods.includes('shade-grown')
       );
     }
     
@@ -227,12 +227,19 @@ export class TeaTcmAnalyzer {
         comparisonAnalysis.seasonality
       );
       
+      // Calculate thermal similarity (NEW)
+      const thermalSimilarity = this._calculateThermalSimilarity(
+        targetAnalysis.thermal,
+        comparisonAnalysis.thermal
+      );
+      
       // Add to results
       similarities.push({
         tea: tea,
         analysis: comparisonAnalysis,
         similarity: similarityScore,
         seasonalSimilarity: seasonalSimilarity,
+        thermalSimilarity: thermalSimilarity,
         matchingElements: this._getMatchingElements(targetAnalysis, comparisonAnalysis)
       });
     });
@@ -243,6 +250,7 @@ export class TeaTcmAnalyzer {
     // Return top matches
     return similarities.slice(0, limit);
   }
+  
   /**
    * Calculate element similarity between two teas
    */
@@ -263,6 +271,27 @@ export class TeaTcmAnalyzer {
     const similarity = 1 - (distance / Math.sqrt(5));
     
     return similarity;
+  }
+  
+  /**
+   * Calculate thermal similarity between two teas (NEW)
+   */
+  _calculateThermalSimilarity(thermal1, thermal2) {
+    if (!thermal1 || !thermal2 || 
+        thermal1.totalThermal === undefined || thermal2.totalThermal === undefined) {
+      return 0;
+    }
+    
+    // Normalize the thermal values to a 0-1 range for comparison
+    // Thermal values are in range -1 to 1, so convert to 0-1
+    const normalizedThermal1 = (thermal1.totalThermal + 1) / 2;
+    const normalizedThermal2 = (thermal2.totalThermal + 1) / 2;
+    
+    // Calculate absolute difference
+    const difference = Math.abs(normalizedThermal1 - normalizedThermal2);
+    
+    // Convert difference to similarity (1.0 = identical, 0.0 = completely opposite)
+    return 1 - difference;
   }
   
   /**
@@ -336,6 +365,16 @@ export class TeaTcmAnalyzer {
       });
     }
     
+    // Check for thermal property matches (NEW)
+    if (analysis1.thermal && analysis2.thermal && 
+        analysis1.thermal.thermalProperty === analysis2.thermal.thermalProperty) {
+      matches.push({
+        property: analysis1.thermal.thermalProperty,
+        role: "thermal-match",
+        strength: "strong"
+      });
+    }
+    
     // Check for seasonal matches
     if (analysis1.seasonality && analysis2.seasonality) {
       const season1 = analysis1.seasonality.peakSeason;
@@ -352,6 +391,7 @@ export class TeaTcmAnalyzer {
     
     return matches;
   }
+  
   /**
    * Get personalized tea recommendations based on TCM constitution
    * 
@@ -473,6 +513,28 @@ export class TeaTcmAnalyzer {
         }
       }
     }
+    
+    // Consider thermal properties for temperature patterns (NEW)
+    if (constitution.temperature && analysis.thermal) {
+      const constitutionTemp = constitution.temperature.toLowerCase();
+      const teaThermal = analysis.thermal.thermalProperty.toLowerCase();
+      
+      // Balance hot/cold patterns
+      if (constitutionTemp.includes('hot') || constitutionTemp.includes('heat')) {
+        if (teaThermal.includes('cool') || teaThermal.includes('cold')) {
+          matchScore += 0.3; // Cooling tea balances hot constitution
+        } else if (teaThermal.includes('warm') || teaThermal.includes('hot')) {
+          matchScore -= 0.3; // Warming tea may aggravate hot constitution
+        }
+      } else if (constitutionTemp.includes('cold')) {
+        if (teaThermal.includes('warm') || teaThermal.includes('hot')) {
+          matchScore += 0.3; // Warming tea balances cold constitution
+        } else if (teaThermal.includes('cool') || teaThermal.includes('cold')) {
+          matchScore -= 0.3; // Cooling tea may aggravate cold constitution
+        }
+      }
+    }
+    
     // Consider seasonal appropriateness if present
     if (analysis.seasonality) {
       const currentSeason = analysis.seasonality.currentSeason;
@@ -483,27 +545,6 @@ export class TeaTcmAnalyzer {
         matchScore += 0.2; // Good seasonal harmony
       } else if (harmonyScore <= 2) {
         matchScore -= 0.1; // Poor seasonal harmony
-      }
-    }
-    
-    // Consider temperature characteristics (hot/cold)
-    if (constitution.temperature && analysis.tcm && analysis.tcm.nature) {
-      const constitutionTemp = constitution.temperature.toLowerCase();
-      const teaNature = analysis.tcm.nature.toLowerCase();
-      
-      // Balance hot/cold patterns
-      if (constitutionTemp.includes('hot') || constitutionTemp.includes('heat')) {
-        if (teaNature.includes('cool') || teaNature.includes('cold')) {
-          matchScore += 0.3; // Cooling tea balances hot constitution
-        } else if (teaNature.includes('warm') || teaNature.includes('hot')) {
-          matchScore -= 0.3; // Warming tea may aggravate hot constitution
-        }
-      } else if (constitutionTemp.includes('cold')) {
-        if (teaNature.includes('warm') || teaNature.includes('hot')) {
-          matchScore += 0.3; // Warming tea balances cold constitution
-        } else if (teaNature.includes('cool') || teaNature.includes('cold')) {
-          matchScore -= 0.3; // Cooling tea may aggravate cold constitution
-        }
       }
     }
     
@@ -545,6 +586,20 @@ export class TeaTcmAnalyzer {
       }
     }
     
+    // Add thermal considerations (NEW)
+    if (constitution.temperature && analysis.thermal) {
+      const constitutionTemp = constitution.temperature.toLowerCase();
+      const teaThermal = analysis.thermal.thermalProperty;
+      
+      if (constitutionTemp.includes('hot') && 
+          (teaThermal.includes('Cooling') || teaThermal.includes('cooling'))) {
+        rationale += `Its ${teaThermal} thermal nature helps balance your heat pattern. `;
+      } else if (constitutionTemp.includes('cold') && 
+                (teaThermal.includes('Warming') || teaThermal.includes('warming'))) {
+        rationale += `Its ${teaThermal} thermal nature helps balance your cold pattern. `;
+      }
+    }
+    
     // Add seasonal considerations if available
     if (analysis.seasonality) {
       const currentSeason = analysis.seasonality.currentSeason;
@@ -557,17 +612,6 @@ export class TeaTcmAnalyzer {
       }
     }
     
-    // Add temperature/nature considerations
-    if (constitution.temperature && analysis.tcm && analysis.tcm.nature) {
-      const constitutionTemp = constitution.temperature.toLowerCase();
-      const teaNature = analysis.tcm.nature.toLowerCase();
-      
-      if (constitutionTemp.includes('hot') && (teaNature.includes('cool') || teaNature.includes('cold'))) {
-        rationale += `Its ${analysis.tcm.nature} nature helps cool and balance your heat pattern. `;
-      } else if (constitutionTemp.includes('cold') && (teaNature.includes('warm') || teaNature.includes('hot'))) {
-        rationale += `Its ${analysis.tcm.nature} nature helps warm and balance your cold pattern. `;
-      }
-    }
     // Add meridian affinities
     if (constitution.focusAreas && analysis.tcm && analysis.tcm.meridians) {
       const areas = constitution.focusAreas.map(a => a.toLowerCase());
@@ -738,6 +782,23 @@ export class TeaTcmAnalyzer {
     }
     report += `\n`;
     
+    // Thermal properties (NEW)
+    if (analysis.thermal) {
+      report += `THERMAL PROPERTIES\n`;
+      report += `------------------\n`;
+      report += `Thermal Nature: ${analysis.thermal.thermalProperty}\n`;
+      report += `Thermal Value: ${analysis.thermal.totalThermal.toFixed(2)} (-1 to 1 scale)\n`;
+      
+      // Component contributions
+      report += `\nThermal Component Contributions:\n`;
+      for (const [component, data] of Object.entries(analysis.thermal.components)) {
+        if (data.value) {
+          report += `  - ${component}: ${data.value.toFixed(2)} (${(data.weight * 100).toFixed(0)}% weight)\n`;
+        }
+      }
+      report += `\n`;
+    }
+    
     // Effect profile
     report += `EFFECT PROFILE\n`;
     report += `--------------\n`;
@@ -752,6 +813,7 @@ export class TeaTcmAnalyzer {
       });
       report += `\n`;
     }
+    
     // TCM terminology
     if (analysis.tcm) {
       report += `TCM TERMINOLOGY\n`;

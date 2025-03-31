@@ -117,7 +117,7 @@ export const processingElementMappings = {
     examples: ["Oolong", "Black tea", "White tea"]
   },
   "fermented": { 
-    water: 0.4, earth: 0.4, fire: 0.2,
+    earth: 0.6, water: 0.25, fire: 0.15,
     description: "Microbial transformation that develops complex earthy character",
     examples: ["Shou Pu-erh", "Liu Bao", "Dark tea"]
   },
@@ -132,12 +132,17 @@ export const processingElementMappings = {
     examples: ["Pu-erh", "Liu Bao", "Fu brick"]
   },
   "pile-fermented": { 
-    water: 0.6, earth: 0.3, fire: 0.1,
+    earth: 0.65, water: 0.25, fire: 0.1,
     description: "Accelerated fermentation through controlled moisture and heat",
     examples: ["Shou Pu-erh", "Some dark teas"]
   },
   "wet-piled": { 
-    water: 0.6, earth: 0.3, fire: 0.1,
+    earth: 0.65, water: 0.25, fire: 0.1,
+    description: "Traditional method for accelerating fermentation",
+    examples: ["Shou Pu-erh", "Some Liu Bao"]
+  },
+  "wet-piling": { 
+    earth: 0.65, water: 0.25, fire: 0.1,
     description: "Traditional method for accelerating fermentation",
     examples: ["Shou Pu-erh", "Some Liu Bao"]
   },

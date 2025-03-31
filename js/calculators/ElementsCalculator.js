@@ -7,7 +7,7 @@ import ThermalFactorCalculator from './ThermalFactorCalculator.js';
 export class ElementsCalculator {
   constructor(config, flavorMapper, compoundMapper, processingMapper, geographyMapper) {
     this.config = config;
-    this.flavorMapper = flavorMapper;
+    this.flavorMapper = flavorMapper; // Now uses FlavorProfileMapper from calculators/
     this.compoundMapper = compoundMapper;
     this.processingMapper = processingMapper;
     this.geographyMapper = geographyMapper;
@@ -110,10 +110,8 @@ export class ElementsCalculator {
     const adjustedElements = this._applyElementInteractions(thermalAdjustedElements);
     
     // Identify dominant and supporting elements
-    console.log("Adjusted elements before sorting:", adjustedElements);
     const sortedElements = Object.entries(adjustedElements)
       .sort(([, a], [, b]) => b - a);
-    console.log("Sorted elements:", sortedElements);
     
     // If we have valid element scores, identify dominant elements
     let dominantElement = null;
@@ -199,14 +197,14 @@ export class ElementsCalculator {
     // Map compounds to elements
     return this.compoundMapper.mapCompoundsToElements(
       tea.caffeineLevel,
-      tea.lTheanineLevel
+      tea.lTheanineLevel,
+      // Check if tea is shade-grown
+      tea.processingMethods && tea.processingMethods.includes('shade-grown')
     );
   }
   
   /**
    * Calculate processing method element scores
-   * @param {Object} tea - Tea object with properties
-   * @returns {Object} Element distribution or null if no data
    */
   _calculateProcessingElements(tea) {
     // Check if processing methods should be ignored based on configuration

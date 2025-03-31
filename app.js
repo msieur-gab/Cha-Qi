@@ -258,7 +258,7 @@ function analyzeTea(teaData) {
         }
         
         // Display results
-        ui.displayAnalysisResults(analysis, drawElementChart, drawSeasonalityChart);
+        displayAnalysisResults(analysis);
         
         // Display calculation breakdown
         console.log('About to display calculation breakdown with:', analysis);
@@ -275,6 +275,64 @@ function analyzeTea(teaData) {
         console.error('Analysis error:', error);
         alert(`Error analyzing tea: ${error.message || 'Unknown error'}`);
     }
+}
+
+// Display analysis results
+function displayAnalysisResults(analysis) {
+    // Set tea information
+    document.getElementById('results-tea-name').textContent = analysis.name;
+    const teaTypeBadge = document.getElementById('results-tea-type');
+    teaTypeBadge.textContent = ui.capitalizeFirstLetter(analysis.type) + ' Tea';
+    
+    // Set dominant and supporting elements
+    ui.setElementDisplay('dominant-element', analysis.dominantElement);
+    ui.setElementDisplay('supporting-element', analysis.supportingElement);
+    
+    // Set element bars
+    ui.setElementBars(analysis.elements);
+    
+    // Draw element chart
+    drawElementChart(analysis.elements);
+    
+    // Draw seasonality chart if available
+    if (analysis.seasonality) {
+        drawSeasonalityChart(analysis.seasonality);
+        ui.displaySeasonalityInfo(analysis.seasonality, analysis.dominantElement);
+    }
+    
+    // Display thermal properties (NEW)
+    if (analysis.thermal) {
+        ui.displayThermalProperties(analysis.thermal);
+    }
+    
+    // Set effect information
+    document.getElementById('effect-name').textContent = analysis.effect.name;
+    document.getElementById('effect-description').textContent = analysis.effect.description;
+    
+    // Set effects list
+    ui.setListItems('specific-effects-list', analysis.effect.specificEffects || []);
+    
+    // Set TCM terminology
+    if (analysis.tcm) {
+        document.getElementById('tcm-nature').textContent = analysis.tcm.nature || 'Not specified';
+        document.getElementById('tcm-flavor').textContent = analysis.tcm.flavor || 'Not specified';
+        document.getElementById('tcm-meridians').textContent = analysis.tcm.meridians ? analysis.tcm.meridians.join(', ') : 'Not specified';
+        document.getElementById('tcm-balance').textContent = analysis.tcm.balance || 'Not specified';
+        
+        // Set TCM qualities list
+        ui.setListItems('tcm-qualities-list', analysis.tcm.qualities || []);
+    }
+    
+    // Set recommendations
+    if (analysis.recommendations) {
+        ui.setListItems('best-time-list', analysis.recommendations.bestTimeToEnjoy || []);
+        ui.setListItems('food-pairings-list', analysis.recommendations.pairingFoods || []);
+        ui.setListItems('preparation-tips-list', analysis.recommendations.preparationTips || []);
+        ui.setListItems('activities-list', analysis.recommendations.complementaryActivities || []);
+    }
+    
+    // Set component contributions
+    ui.setComponentContributions(analysis);
 }
 
 // Toggle sample teas dropdown

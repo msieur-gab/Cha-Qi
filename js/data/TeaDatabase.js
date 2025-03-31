@@ -37,7 +37,7 @@ const teaDatabase = [
     origin: "Yunnan, China",
     caffeineLevel: 4, // Moderate (30–40 mg)
     lTheanineLevel: 2,
-    flavorProfile: ["earthy", "smooth", "woody"],
+    flavorProfile: ["earthy", "woody", "sweet", "leather"],
     processingMethods: ["wet-piling", "fermented", "compressed", "aged"],
     geography: {
       altitude: 1300, // meters
@@ -48,7 +48,7 @@ const teaDatabase = [
     },
     tcmElements: {
       dominant: { element: "earth", percent: 80 }, // Post-fermentation → spleen/stomach focus
-      supportive: { element: "metal", percent: 15 } // Mild detoxification
+      supportive: { element: "fire", percent: 15 } // Mild detoxification
     }
   },
   {
@@ -100,7 +100,7 @@ const teaDatabase = [
     origin: "Zhejiang, China",
     caffeineLevel: 4, // Moderate (25–30 mg)
     lTheanineLevel: 5,
-    flavorProfile: ["chestnut", "vegetal", "buttery"],
+    flavorProfile: ["vegetal", "floral", "sweet"],
     processingMethods: ["pan-fired", "flat-pressed", "non-oxidized"],
     geography: {
       altitude: 300, // meters

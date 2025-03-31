@@ -94,6 +94,10 @@
         // Format element distribution to percentage display
         function formatElementDistribution(elements) {
             let result = '';
+            // Add check for null or undefined elements
+            if (!elements) {
+                return '<span class="element-highlight">No elements data available</span>';
+            }
             Object.entries(elements)
                 .sort(([, a], [, b]) => b - a)
                 .forEach(([element, value]) => {
@@ -269,6 +273,23 @@
             <p><strong>Profile:</strong> ${dominantProfile.join(", ")}</p>
             <p><strong>Element Distribution:</strong> ${formatElementDistribution(dominantResults)}</p>
             ${createThresholdIndicator(dominantResults.water, 0.9, '>=', 'Water >= 90%')}
+        </div>
+        `;
+
+        // CASE 8: Test Metal element dominant in floral-spicy profiles
+        testResults += `
+        <div class="test-section">
+            <h3>8. Metal Element in Floral-Spicy Profiles</h3>
+            <p>Testing that floral and spicy notes together emphasize the Metal element through pungent flavor association.</p>
+        `;
+        
+        const floralSpicyProfile = ["jasmine", "orchid", "floral", "cinnamon", "peppery"];
+        const floralSpicyResults = mapper.mapFlavorProfileToElements(floralSpicyProfile);
+        
+        testResults += `
+            <p><strong>Profile:</strong> ${floralSpicyProfile.join(", ")}</p>
+            <p><strong>Element Distribution:</strong> ${formatElementDistribution(floralSpicyResults)}</p>
+            ${createThresholdIndicator(floralSpicyResults.metal, 0.5, '>=', 'Metal >= 50%')}
         </div>
         `;
 

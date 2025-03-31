@@ -166,6 +166,16 @@ export class ProcessingElementMapper {
       elements.earth = (elements.earth * 1.1) + 0.05;
     }
     
+    // Shou Puerh processing (wet-piling/wet-piled + fermented + compressed)
+    if ((normalizedMethods.includes('wet-piling') || normalizedMethods.includes('wet-piled')) && 
+        normalizedMethods.includes('fermented') && 
+        normalizedMethods.includes('compressed')) {
+      // Further enhance Earth to ensure dominance, adjust other elements
+      elements.earth = (elements.earth * 1.3) + 0.1;
+      elements.water = Math.min(elements.earth * 0.5, elements.water);
+      elements.metal = Math.max(elements.metal, 0.1); // Ensure some metal presence
+    }
+    
     // Heavy roasting (reduces Water, increases Fire)
     if (normalizedMethods.includes('heavy-roast') || normalizedMethods.includes('charcoal-roasted')) {
       elements.fire = (elements.fire * 1.3) + 0.1;

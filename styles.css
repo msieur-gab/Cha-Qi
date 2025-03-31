@@ -460,7 +460,7 @@ input[type="range"] {
     margin-bottom: 8px;
 }
 
-/* TCM Terminology Styles */
+/* TCM Panel Styles */
 .tcm-properties {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -484,6 +484,60 @@ input[type="range"] {
 .tcm-value {
     font-weight: 500;
     color: var(--primary-color);
+}
+
+/* Thermal Properties Styles */
+.tcm-thermal-properties {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.tcm-thermal-properties h4 {
+    margin-bottom: 12px;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.thermal-effects h5 {
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--light-text);
+}
+
+.thermal-effects ul {
+    list-style-type: none;
+    padding-left: 5px;
+}
+
+.thermal-effects li {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    position: relative;
+    padding-left: 15px;
+}
+
+.thermal-effects li:before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--primary-color);
+}
+
+.warm-thermal {
+    color: var(--fire-color);
+}
+
+.cool-thermal {
+    color: var(--water-color);
+}
+
+.neutral-thermal {
+    color: var(--earth-color);
 }
 
 .tcm-qualities {
