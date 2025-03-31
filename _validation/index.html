@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCM Validation Suite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #4A6741;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .button {
+            background-color: #4A6741;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 10px 10px 0;
+        }
+        .description {
+            margin-top: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>TCM Validation Suite</h1>
+    <p>Welcome to the Tea TCM Validation Suite. This directory contains various tests and validation tools for the TCM mapping system.</p>
+    
+    <div class="test-section">
+        <h2>Comprehensive Tests</h2>
+        <div>
+            <a href="hierarchical-tests/hierarchical-test.html" class="button">Hierarchical TCM Element Test</a>
+            <div class="description">
+                A comprehensive validation tool that shows the detailed impact of flavor profiles, compounds, processing methods, and geography on TCM element distributions.
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Specific Test Cases</h2>
+        <div>
+            <a href="tcm-tests/tcm-edge-case-tests.html" class="button">TCM Edge Case Tests</a>
+            <div class="description">
+                Tests the improved HierarchicalFlavorMapper with specific edge cases to validate the TCM-aligned changes.
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Unit Tests</h2>
+        <p>Node.js test scripts for validating individual components:</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <a href="unit-tests/test-flavor-mapper.js" class="button">Flavor Mapper Test</a>
+            <a href="unit-tests/test-compound-mapper.js" class="button">Compound Mapper Test</a>
+            <a href="unit-tests/test-elements-calculator.js" class="button">Elements Calculator Test</a>
+            <a href="unit-tests/test-combined-mappers.js" class="button">Combined Mappers Test</a>
+            <a href="unit-tests/test-expanded-flavor-mapping.js" class="button">Expanded Flavor Mapping Test</a>
+        </div>
+        <div class="description" style="margin-top: 15px;">
+            These files are JavaScript test scripts designed to be run with Node.js. To run a test, use the command: <code>node validation/unit-tests/[test-file-name].js</code>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Documentation</h2>
+        <div>
+            <a href="TCM-TESTING.md" class="button">TCM Testing Guide</a>
+            <div class="description">
+                Documentation about the TCM testing approach and validation methodology.
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px; text-align: center;">
+        <a href=".." class="button">Back to Project Root</a>
+    </div>
+</body>
+</html> 

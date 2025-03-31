@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCM Comprehensive Validation Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #4A6741;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .flavor-profile {
+            font-weight: bold;
+            color: #8D593E;
+        }
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .results-table th, .results-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .results-table th {
+            background-color: #4A6741;
+            color: white;
+        }
+        .results-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .dominant {
+            font-weight: bold;
+            color: #8D593E;
+        }
+        .supportive {
+            font-weight: bold;
+            color: #6A844B;
+        }
+        .comparison {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+        .tea-suggestion {
+            background-color: #EBF5DF;
+            padding: 10px 15px;
+            border-left: 4px solid #4A6741;
+            margin: 10px 0;
+            font-style: italic;
+        }
+        .element-highlight {
+            display: inline-block;
+            padding: 3px 8px;
+            margin-right: 5px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .element-wood {
+            background-color: #91C788;
+            color: #fff;
+        }
+        .element-fire {
+            background-color: #FF8882;
+            color: #fff;
+        }
+        .element-earth {
+            background-color: #F3B263;
+            color: #fff;
+        }
+        .element-metal {
+            background-color: #B6C9F0;
+            color: #fff;
+        }
+        .element-water {
+            background-color: #86BBD8;
+            color: #fff;
+        }
+        .element-balance {
+            display: flex;
+            justify-content: space-between;
+            margin: 15px 0;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .reference-data {
+            background-color: #FFF8E1;
+            padding: 10px 15px;
+            border-left: 4px solid #FFC107;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+        .filter-controls {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f9f5;
+            border-radius: 5px;
+        }
+        select {
+            padding: 5px;
+            margin-right: 10px;
+        }
+        .button {
+            background-color: #4A6741;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .banner {
+            background-color: #FFF8E1;
+            padding: 10px 15px;
+            border-left: 4px solid #FFC107;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+        }
+        .contribution-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f9f5;
+            border-radius: 5px;
+        }
+        .contribution-chart {
+            display: flex;
+            height: 30px;
+            width: 100%;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .contribution-chart div {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .tab {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            margin-right: 5px;
+            background-color: #f0f0f0;
+        }
+        .tab.active {
+            background-color: #4A6741;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 0 5px 5px 5px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .component-score {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .component-score .label {
+            font-weight: bold;
+            flex: 0 0 30%;
+        }
+        .component-score .bar-container {
+            flex: 0 0 65%;
+            background-color: #eee;
+            height: 20px;
+            position: relative;
+            border-radius: 3px;
+        }
+        .component-score .bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            border-radius: 3px;
+            text-align: right;
+            line-height: 20px;
+            color: white;
+            padding-right: 5px;
+            box-sizing: border-box;
+            font-size: 12px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>TCM Comprehensive Validation Tool</h1>
+    <p>This validation tool shows the detailed impact of flavor profiles, compounds, processing methods, and geography on TCM element distributions.</p>
+    
+    <div class="banner">
+        🔄 All calculations now use the unified FlavorProfileMapper system. <a href="../tcm-tests/tcm-edge-case-tests.html" class="button">View Edge Case Tests</a>
+    </div>
+    
+    <div class="tea-suggestion" style="margin-bottom: 20px;">
+        <strong>Validation Capabilities:</strong>
+        <ul>
+            <li><strong>Flavor Analysis:</strong> Shows how flavor notes map to TCM elements</li>
+            <li><strong>Component Breakdown:</strong> Visualizes how flavor, compounds, processing, and geography contribute to elements</li>
+            <li><strong>Match Validation:</strong> Compares calculated elements against reference values</li>
+            <li><strong>Weight Adjustment:</strong> Adjust component weights to see how they affect element distributions</li>
+        </ul>
+    </div>
+    
+    <div class="filter-controls">
+        <label for="tea-type-filter">Filter by Tea Type:</label>
+        <select id="tea-type-filter">
+            <option value="all">All Types</option>
+            <option value="green">Green</option>
+            <option value="white">White</option>
+            <option value="black">Black</option>
+            <option value="oolong">Oolong</option>
+            <option value="puerh">Pu-erh</option>
+            <option value="yellow">Yellow</option>
+        </select>
+        
+        <div style="margin-top: 10px;">
+            <label>Component Weights:</label>
+            <div style="display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <label for="flavor-weight" style="min-width: 70px;">Flavor:</label>
+                    <input type="range" id="flavor-weight" min="0" max="100" value="40" style="width: 100px;">
+                    <input type="number" id="flavor-weight-number" min="0" max="100" value="40" step="0.1" style="width: 60px; margin-left: 5px;">
+                    <span>%</span>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <label for="compounds-weight" style="min-width: 70px;">Compounds:</label>
+                    <input type="range" id="compounds-weight" min="0" max="100" value="30" style="width: 100px;">
+                    <input type="number" id="compounds-weight-number" min="0" max="100" value="30" step="0.1" style="width: 60px; margin-left: 5px;">
+                    <span>%</span>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <label for="processing-weight" style="min-width: 70px;">Processing:</label>
+                    <input type="range" id="processing-weight" min="0" max="100" value="20" style="width: 100px;">
+                    <input type="number" id="processing-weight-number" min="0" max="100" value="20" step="0.1" style="width: 60px; margin-left: 5px;">
+                    <span>%</span>
+                </div>
+                <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                    <label for="geography-weight" style="min-width: 70px;">Geography:</label>
+                    <input type="range" id="geography-weight" min="0" max="100" value="10" style="width: 100px;">
+                    <input type="number" id="geography-weight-number" min="0" max="100" value="10" step="0.1" style="width: 60px; margin-left: 5px;">
+                    <span>%</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; margin-top: 5px; align-items: center;">
+                <button id="normalize-weights-btn" class="button" style="margin-right: 10px; font-size: 0.9em; padding: 3px 8px;">
+                    Normalize Weights
+                </button>
+                <span id="total-weight" style="font-size: 0.9em;">Total: 100%</span>
+            </div>
+        </div>
+        
+        <button id="refresh-btn" class="button" style="margin-top: 10px;">
+            Refresh Results
+        </button>
+    </div>
+    
+    <div id="test-results">
+        <h2>Loading test results...</h2>
+    </div>
+    
+    <script type="module">
+        import FlavorProfileMapper from '../../js/data/FlavorProfileMapper.js';
+        import teaDatabase from '../../js/data/TeaDatabase.js';
+        import { TeaTcmAnalyzer } from '../../js/TeaTcmAnalyzer.js';
+        
+        // Initialize the mappers
+        const flavorMapper = new FlavorProfileMapper();
+        
+        // DOM elements
+        const teaTypeFilter = document.getElementById('tea-type-filter');
+        const refreshButton = document.getElementById('refresh-btn');
+        const flavorWeightInput = document.getElementById('flavor-weight');
+        const compoundsWeightInput = document.getElementById('compounds-weight');
+        const processingWeightInput = document.getElementById('processing-weight');
+        const geographyWeightInput = document.getElementById('geography-weight');
+        const flavorWeightNumber = document.getElementById('flavor-weight-number');
+        const compoundsWeightNumber = document.getElementById('compounds-weight-number');
+        const processingWeightNumber = document.getElementById('processing-weight-number');
+        const geographyWeightNumber = document.getElementById('geography-weight-number');
+        const totalWeightDisplay = document.getElementById('total-weight');
+        const normalizeWeightsBtn = document.getElementById('normalize-weights-btn');
+        
+        // Update all weight displays and calculate total
+        function updateWeightDisplays() {
+            // Get values from numeric inputs (more precise)
+            const flavorWeight = parseFloat(flavorWeightNumber.value);
+            const compoundsWeight = parseFloat(compoundsWeightNumber.value);
+            const processingWeight = parseFloat(processingWeightNumber.value);
+            const geographyWeight = parseFloat(geographyWeightNumber.value);
+            
+            // Calculate and display total weight
+            const totalWeight = flavorWeight + compoundsWeight + processingWeight + geographyWeight;
+            totalWeightDisplay.textContent = `Total: ${totalWeight.toFixed(1)}%`;
+            
+            // Highlight if not 100%
+            if (Math.abs(totalWeight - 100) > 0.1) {
+                totalWeightDisplay.style.color = '#e74c3c';
+                totalWeightDisplay.style.fontWeight = 'bold';
+            } else {
+                totalWeightDisplay.style.color = '';
+                totalWeightDisplay.style.fontWeight = '';
+            }
+        }
+        
+        // Synchronize slider with numeric input (slider → number)
+        function syncSliderToNumber(slider, numberInput) {
+            numberInput.value = slider.value;
+            updateWeightDisplays();
+        }
+        
+        // Synchronize numeric input with slider (number → slider)
+        function syncNumberToSlider(numberInput, slider) {
+            slider.value = numberInput.value;
+            updateWeightDisplays();
+        }
+        
+        // Normalize weights to sum to 100%
+        function normalizeWeights() {
+            const flavorWeight = parseFloat(flavorWeightNumber.value);
+            const compoundsWeight = parseFloat(compoundsWeightNumber.value);
+            const processingWeight = parseFloat(processingWeightNumber.value);
+            const geographyWeight = parseFloat(geographyWeightNumber.value);
+            
+            const total = flavorWeight + compoundsWeight + processingWeight + geographyWeight;
+            
+            // Skip if total is already 100 or any weight is 0
+            if (Math.abs(total - 100) < 0.1 || total === 0) {
+                return;
+            }
+            
+            // Calculate normalized weights
+            const normalizedFlavor = (flavorWeight / total) * 100;
+            const normalizedCompounds = (compoundsWeight / total) * 100;
+            const normalizedProcessing = (processingWeight / total) * 100;
+            const normalizedGeography = (geographyWeight / total) * 100;
+            
+            // Update numeric inputs (round to 1 decimal place)
+            flavorWeightNumber.value = normalizedFlavor.toFixed(1);
+            compoundsWeightNumber.value = normalizedCompounds.toFixed(1);
+            processingWeightNumber.value = normalizedProcessing.toFixed(1);
+            geographyWeightNumber.value = normalizedGeography.toFixed(1);
+            
+            // Sync sliders with new values
+            syncNumberToSlider(flavorWeightNumber, flavorWeightInput);
+            syncNumberToSlider(compoundsWeightNumber, compoundsWeightInput);
+            syncNumberToSlider(processingWeightNumber, processingWeightInput);
+            syncNumberToSlider(geographyWeightNumber, geographyWeightInput);
+            
+            updateWeightDisplays();
+        }
+        
+        // Initialize TCM Analyzer with current weight values
+        function createAnalyzer() {
+            // Get weights from numeric inputs (more precise)
+            const flavorWeight = parseFloat(flavorWeightNumber.value) / 100;
+            const compoundsWeight = parseFloat(compoundsWeightNumber.value) / 100;
+            const processingWeight = parseFloat(processingWeightNumber.value) / 100;
+            const geographyWeight = parseFloat(geographyWeightNumber.value) / 100;
+            
+            // Normalize weights if they don't sum to 1
+            const totalWeight = flavorWeight + compoundsWeight + processingWeight + geographyWeight;
+            const normalizedFlavorWeight = flavorWeight / totalWeight;
+            const normalizedCompoundsWeight = compoundsWeight / totalWeight;
+            const normalizedProcessingWeight = processingWeight / totalWeight;
+            const normalizedGeographyWeight = geographyWeight / totalWeight;
+            
+            // Create analyzer with custom weights
+            return new TeaTcmAnalyzer({
+                elementWeights: {
+                    flavor: normalizedFlavorWeight,
+                    compounds: normalizedCompoundsWeight,
+                    processing: normalizedProcessingWeight,
+                    geography: normalizedGeographyWeight
+                }
+            });
+        }
+        
+        // Format element distribution for display
+        function formatElementDistribution(elements) {
+            let result = '';
+            Object.entries(elements)
+                .sort(([, a], [, b]) => b - a)
+                .forEach(([element, value]) => {
+                    const percentage = (value * 100).toFixed(1);
+                    result += `<span class="element-highlight element-${element}">${element.toUpperCase()}: ${percentage}%</span> `;
+                });
+            return result;
+        }
+        
+        // Create a horizontal stacked bar chart for element distribution
+        function createElementChart(elements) {
+            let chartHtml = '<div class="contribution-chart">';
+            
+            // Sort elements by value (descending)
+            const sortedElements = Object.entries(elements)
+                .sort(([, a], [, b]) => b - a);
+            
+            // Create chart segments
+            sortedElements.forEach(([element, value]) => {
+                const percentage = value * 100;
+                if (percentage >= 1) { // Only show elements with at least 1%
+                    chartHtml += `<div class="element-${element}" style="width: ${percentage}%;">${Math.round(percentage)}%</div>`;
+                }
+            });
+            
+            chartHtml += '</div>';
+            return chartHtml;
+        }
+        
+        // Create a component contribution visualization with dominant and supportive elements
+        function createComponentScoreViz(componentName, elements, color) {
+            if (!elements) return '';
+            
+            // Get the dominant and supportive elements
+            const sortedElements = Object.entries(elements)
+                .sort(([, a], [, b]) => b - a);
+                
+            if (sortedElements.length === 0) return '';
+            
+            const [dominantElement, dominantScore] = sortedElements[0];
+            const dominantPercentage = dominantScore * 100;
+            
+            let supportiveElement = null;
+            let supportivePercentage = 0;
+            
+            if (sortedElements.length > 1) {
+                [supportiveElement, supportivePercentage] = sortedElements[1];
+                supportivePercentage = supportivePercentage * 100;
+            }
+            
+            return `
+            <div class="component-score" style="margin-bottom: 15px;">
+                <div class="label">${componentName}:</div>
+                <div class="bar-container" style="flex: 0 0 65%;">
+                    ${dominantPercentage >= 1 ? 
+                      `<div class="bar element-${dominantElement}" style="width: ${dominantPercentage}%;">
+                        ${dominantElement.toUpperCase()} ${dominantPercentage.toFixed(1)}%
+                      </div>` : ''}
+                </div>
+            </div>
+            ${supportiveElement && supportivePercentage >= 1 ? 
+              `<div class="component-score" style="margin-bottom: 15px; margin-left: 15px; font-size: 0.9em;">
+                <div class="label">Secondary:</div>
+                <div class="bar-container" style="flex: 0 0 65%;">
+                  <div class="bar element-${supportiveElement}" style="width: ${supportivePercentage}%;">
+                    ${supportiveElement.toUpperCase()} ${supportivePercentage.toFixed(1)}%
+                  </div>
+                </div>
+              </div>` : ''}`;
+        }
+        
+        // Run tests and generate results
+        function generateTestResults() {
+            const resultsElement = document.getElementById('test-results');
+            resultsElement.innerHTML = '<h2>Processing tea data...</h2>';
+            
+            // Update weight displays
+            updateWeightDisplays();
+            
+            // Create TCM analyzer with current weights
+            const tcmAnalyzer = createAnalyzer();
+            
+            // Get selected tea type filter
+            const selectedType = teaTypeFilter.value;
+            
+            // Filter teas if type is selected
+            const filteredTeas = selectedType === 'all' 
+                ? teaDatabase 
+                : teaDatabase.filter(tea => tea.type === selectedType);
+            
+            if (filteredTeas.length === 0) {
+                resultsElement.innerHTML = '<h2>No teas match the selected filter</h2>';
+                return;
+            }
+            
+            let resultsHTML = `<h2>Test Results (${filteredTeas.length} teas)</h2>`;
+            
+            filteredTeas.forEach((tea, index) => {
+                // Get flavor-only analysis
+                const flavorAnalysis = flavorMapper.analyzeFlavorProfile(tea.flavorProfile);
+                
+                // Get full TCM analysis with all components
+                const tcmAnalysis = tcmAnalyzer.analyzeTea(tea);
+                
+                // Sort elements to find dominant and supportive
+                const sortedElements = Object.entries(tcmAnalysis.elements)
+                    .sort(([, a], [, b]) => b - a);
+                
+                const dominantElement = sortedElements[0][0];
+                const dominantScore = sortedElements[0][1];
+                
+                const supportiveElement = sortedElements[1][0];
+                const supportiveScore = sortedElements[1][1];
+                
+                // Calculate if matches reference data
+                const matchesDominant = dominantElement === tea.tcmElements.dominant.element.toLowerCase();
+                const matchesSupportive = supportiveElement === tea.tcmElements.supportive.element.toLowerCase();
+                const perfectMatch = matchesDominant && matchesSupportive;
+                
+                // Get component scores from TCM analysis
+                const componentScores = tcmAnalysis.rawElementAnalysis?.componentScores || {};
+                
+                resultsHTML += `
+                <div class="test-section">
+                    <h3>${tea.name} (${capitalizeFirstLetter(tea.type)})</h3>
+                    
+                    <div class="flavor-profile">
+                        Flavor Profile: ${tea.flavorProfile.join(', ')}
+                    </div>
+                    
+                    <div class="reference-data">
+                        <strong>Reference TCM Values:</strong> 
+                        Dominant ${capitalizeFirstLetter(tea.tcmElements.dominant.element)} (${tea.tcmElements.dominant.percent}%), 
+                        Supportive ${capitalizeFirstLetter(tea.tcmElements.supportive.element)} (${tea.tcmElements.supportive.percent}%)
+                        <div style="margin-top: 5px; ${perfectMatch ? 'color: #4CAF50; font-weight: bold;' : 'color: #F44336;'}">
+                            ${perfectMatch ? '✓ Perfect Match!' : matchesDominant ? '△ Dominant Element Matches Only' : matchesSupportive ? '△ Supportive Element Matches Only' : '✗ No Matches'}
+                        </div>
+                    </div>
+                    
+                    <div class="element-balance">
+                        <div>
+                            <span class="element-highlight element-${dominantElement}">
+                                ${dominantElement.toUpperCase()} ${(dominantScore * 100).toFixed(1)}%
+                            </span>
+                            <span>Primary Element</span>
+                        </div>
+                        <div>
+                            <span class="element-highlight element-${supportiveElement}">
+                                ${supportiveElement.toUpperCase()} ${(supportiveScore * 100).toFixed(1)}%
+                            </span>
+                            <span>Supportive Element</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs">
+                        <div class="tab active" data-tab="overall-${index}">Overall Analysis</div>
+                        <div class="tab" data-tab="components-${index}">Component Breakdown</div>
+                        <div class="tab" data-tab="flavors-${index}">Flavor Analysis</div>
+                    </div>
+                    
+                    <div id="overall-${index}" class="tab-content active">
+                        <h4>Final Element Distribution</h4>
+                        ${createElementChart(tcmAnalysis.elements)}
+                        
+                        <table class="results-table">
+                            <tr>
+                                <th>Element</th>
+                                <th>Score</th>
+                            </tr>
+                            ${sortedElements.map(([element, score], idx) => `
+                                <tr class="${idx === 0 ? 'dominant' : (idx === 1 ? 'supportive' : '')}">
+                                    <td>${element}</td>
+                                    <td>${(score * 100).toFixed(1)}%</td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                        
+                        <h4>Component Contributions</h4>
+                        <div class="contribution-section">
+                            <p style="margin-bottom: 10px;">How each component contributes to the final element distribution:</p>
+                            
+                            ${componentScores.flavor ? 
+                              `<div style="margin-bottom: 20px;">
+                                <h5>Flavor (${parseFloat(flavorWeightNumber.value).toFixed(1)}% weight)</h5>
+                                ${createComponentScoreViz('Primary', componentScores.flavor, '#91C788')}
+                              </div>` : ''}
+                            
+                            ${componentScores.compounds ? 
+                              `<div style="margin-bottom: 20px;">
+                                <h5>Compounds (${parseFloat(compoundsWeightNumber.value).toFixed(1)}% weight)</h5>
+                                ${createComponentScoreViz('Primary', componentScores.compounds, '#FF8882')}
+                              </div>` : ''}
+                            
+                            ${componentScores.processing ? 
+                              `<div style="margin-bottom: 20px;">
+                                <h5>Processing (${parseFloat(processingWeightNumber.value).toFixed(1)}% weight)</h5>
+                                ${createComponentScoreViz('Primary', componentScores.processing, '#F3B263')}
+                              </div>` : ''}
+                            
+                            ${componentScores.geography ? 
+                              `<div style="margin-bottom: 20px;">
+                                <h5>Geography (${parseFloat(geographyWeightNumber.value).toFixed(1)}% weight)</h5>
+                                ${createComponentScoreViz('Primary', componentScores.geography, '#86BBD8')}
+                              </div>` : ''}
+                            
+                            <div style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 15px;">
+                                <h5>Element Contribution Summary</h5>
+                                <table class="results-table">
+                                    <tr>
+                                        <th>Element</th>
+                                        <th>Flavor</th>
+                                        <th>Compounds</th>
+                                        <th>Processing</th>
+                                        <th>Geography</th>
+                                        <th>Final</th>
+                                    </tr>
+                                    ${Object.keys(tcmAnalysis.elements).map(element => {
+                                        const flavorContrib = componentScores.flavor ? componentScores.flavor[element] || 0 : 0;
+                                        const compoundsContrib = componentScores.compounds ? componentScores.compounds[element] || 0 : 0;
+                                        const processingContrib = componentScores.processing ? componentScores.processing[element] || 0 : 0;
+                                        const geographyContrib = componentScores.geography ? componentScores.geography[element] || 0 : 0;
+                                        const finalScore = tcmAnalysis.elements[element];
+                                        
+                                        // Calculate weighted contributions using the current weight settings
+                                        const flavorWeight = parseFloat(flavorWeightNumber.value) / 100;
+                                        const compoundsWeight = parseFloat(compoundsWeightNumber.value) / 100;
+                                        const processingWeight = parseFloat(processingWeightNumber.value) / 100;
+                                        const geographyWeight = parseFloat(geographyWeightNumber.value) / 100;
+                                        
+                                        // Normalize the weights to sum to 1
+                                        const totalWeight = flavorWeight + compoundsWeight + processingWeight + geographyWeight;
+                                        const normalizedFlavorWeight = flavorWeight / totalWeight;
+                                        const normalizedCompoundsWeight = compoundsWeight / totalWeight;
+                                        const normalizedProcessingWeight = processingWeight / totalWeight;
+                                        const normalizedGeographyWeight = geographyWeight / totalWeight;
+                                        
+                                        const weightedFlavorContrib = flavorContrib * normalizedFlavorWeight;
+                                        const weightedCompoundsContrib = compoundsContrib * normalizedCompoundsWeight;
+                                        const weightedProcessingContrib = processingContrib * normalizedProcessingWeight;
+                                        const weightedGeographyContrib = geographyContrib * normalizedGeographyWeight;
+                                        
+                                        // Calculate the sum of weighted contributions
+                                        const weightedSum = 
+                                            weightedFlavorContrib + 
+                                            weightedCompoundsContrib + 
+                                            weightedProcessingContrib + 
+                                            weightedGeographyContrib;
+                                        
+                                        const isSumSignificant = Math.abs(weightedSum - finalScore) < 0.01;
+                                        
+                                        const isDominant = element === dominantElement;
+                                        const isSupportive = element === supportiveElement;
+                                        
+                                        return `
+                                        <tr class="${isDominant ? 'dominant' : (isSupportive ? 'supportive' : '')}">
+                                            <td>${element.toUpperCase()}</td>
+                                            <td>${flavorContrib ? (flavorContrib * 100).toFixed(1) + '%' : '-'}</td>
+                                            <td>${compoundsContrib ? (compoundsContrib * 100).toFixed(1) + '%' : '-'}</td>
+                                            <td>${processingContrib ? (processingContrib * 100).toFixed(1) + '%' : '-'}</td>
+                                            <td>${geographyContrib ? (geographyContrib * 100).toFixed(1) + '%' : '-'}</td>
+                                            <td>
+                                                ${(finalScore * 100).toFixed(1)}%
+                                                ${isSumSignificant ? 
+                                                  '<span title="Sum of weighted components match final value">✓</span>' : 
+                                                  `<span title="Calculated: ${(weightedSum * 100).toFixed(1)}%, Actual: ${(finalScore * 100).toFixed(1)}%">~</span>`}
+                                            </td>
+                                        </tr>`;
+                                    }).join('')}
+                                </table>
+                                <p style="font-size: 0.9em; margin-top: 10px;">
+                                    Note: The "Final" column shows the element's percentage in the tea's overall profile, 
+                                    which is calculated by applying the component weights to each source's contribution.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="components-${index}" class="tab-content">
+                        <h4>Component Distributions</h4>
+                        
+                        <h5>Flavor Elements (${parseFloat(flavorWeightNumber.value).toFixed(1)}% weight)</h5>
+                        ${componentScores.flavor ? createElementChart(componentScores.flavor) : '<p>No flavor data available</p>'}
+                        
+                        <h5>Compound Elements (${parseFloat(compoundsWeightNumber.value).toFixed(1)}% weight)</h5>
+                        ${tea.caffeineLevel || tea.lTheanineLevel ? createElementChart(componentScores.compounds) : '<p>No compound data available</p>'}
+                        
+                        <h5>Processing Elements (${parseFloat(processingWeightNumber.value).toFixed(1)}% weight)</h5>
+                        ${tea.processingMethods?.length > 0 ? createElementChart(componentScores.processing) : '<p>No processing data available</p>'}
+                        
+                        <h5>Geography Elements (${parseFloat(geographyWeightNumber.value).toFixed(1)}% weight)</h5>
+                        ${tea.geography ? createElementChart(componentScores.geography) : '<p>No geography data available</p>'}
+                        
+                        <div style="margin-top: 15px;">
+                            <strong>Available Attributes:</strong>
+                            <ul>
+                                ${tea.caffeineLevel !== undefined ? `<li>Caffeine Level: ${tea.caffeineLevel}/10</li>` : ''}
+                                ${tea.lTheanineLevel !== undefined ? `<li>L-Theanine Level: ${tea.lTheanineLevel}/10</li>` : ''}
+                                ${tea.processingMethods?.length > 0 ? `<li>Processing Methods: ${tea.processingMethods.join(', ')}</li>` : ''}
+                                ${tea.geography ? `<li>Geography: ${tea.geography.region || ''} ${tea.geography.elevation ? `(${tea.geography.elevation}m)` : ''}</li>` : ''}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div id="flavors-${index}" class="tab-content">
+                        <h4>TCM Flavor Distribution</h4>
+                        <table class="results-table">
+                            <tr>
+                                <th>TCM Flavor</th>
+                                <th>Score</th>
+                            </tr>
+                            ${Object.entries(flavorAnalysis.tcmFlavors)
+                                .sort(([, a], [, b]) => b - a)
+                                .map(([flavor, score]) => `
+                                    <tr class="${flavor === flavorAnalysis.dominantTcmFlavor ? 'dominant' : ''}">
+                                        <td>${flavor}</td>
+                                        <td>${score.toFixed(2)}</td>
+                                    </tr>
+                                `).join('')}
+                        </table>
+                        
+                        <h4>Flavor Categories</h4>
+                        <table class="results-table">
+                            <tr>
+                                <th>Category</th>
+                                <th>Count</th>
+                            </tr>
+                            ${Object.entries(flavorAnalysis.subcategories)
+                                .sort(([, a], [, b]) => b - a)
+                                .map(([category, count]) => `
+                                    <tr>
+                                        <td>${category}</td>
+                                        <td>${count}</td>
+                                    </tr>
+                                `).join('')}
+                        </table>
+                    </div>
+                </div>
+                `;
+            });
+            
+            // Calculate statistics
+            const totalTeas = filteredTeas.length;
+            const perfectMatches = filteredTeas.filter(tea => {
+                const analysis = tcmAnalyzer.analyzeTea(tea);
+                const sortedElements = Object.entries(analysis.elements).sort(([, a], [, b]) => b - a);
+                return sortedElements[0][0] === tea.tcmElements.dominant.element.toLowerCase() && 
+                       sortedElements[1][0] === tea.tcmElements.supportive.element.toLowerCase();
+            }).length;
+            
+            const dominantMatches = filteredTeas.filter(tea => {
+                const analysis = tcmAnalyzer.analyzeTea(tea);
+                const sortedElements = Object.entries(analysis.elements).sort(([, a], [, b]) => b - a);
+                return sortedElements[0][0] === tea.tcmElements.dominant.element.toLowerCase();
+            }).length;
+            
+            // Add statistics to results
+            resultsHTML = `
+                <div style="margin-bottom: 20px; padding: 15px; background-color: #f0f7f0; border-radius: 5px;">
+                    <h3 style="margin-top: 0;">Analysis Statistics</h3>
+                    <div style="font-size: 1.2em; margin-bottom: 10px;">
+                        Perfect Matches: <strong>${perfectMatches}/${totalTeas}</strong> (${Math.round((perfectMatches/totalTeas)*100)}%)
+                    </div>
+                    <div style="font-size: 1.2em;">
+                        Dominant Element Matches: <strong>${dominantMatches}/${totalTeas}</strong> (${Math.round((dominantMatches/totalTeas)*100)}%)
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9em;">
+                        <p>Component weights: Flavor (${parseFloat(flavorWeightNumber.value).toFixed(1)}%), 
+                        Compounds (${parseFloat(compoundsWeightNumber.value).toFixed(1)}%), 
+                        Processing (${parseFloat(processingWeightNumber.value).toFixed(1)}%), 
+                        Geography (${parseFloat(geographyWeightNumber.value).toFixed(1)}%)</p>
+                    </div>
+                </div>
+            ` + resultsHTML;
+            
+            resultsElement.innerHTML = resultsHTML;
+            
+            // Set up tab functionality
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs in this group
+                    const tabGroupId = tabId.substring(tabId.lastIndexOf('-'));
+                    document.querySelectorAll(`.tab[data-tab$="${tabGroupId}"]`).forEach(t => {
+                        t.classList.remove('active');
+                    });
+                    
+                    // Hide all tab content in this group
+                    document.querySelectorAll(`.tab-content[id$="${tabGroupId}"]`).forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show selected tab and content
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+        
+        // Helper function to capitalize first letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        
+        // Set up event listeners
+        refreshButton.addEventListener('click', generateTestResults);
+        teaTypeFilter.addEventListener('change', generateTestResults);
+        normalizeWeightsBtn.addEventListener('click', normalizeWeights);
+        
+        // Set up event listeners for sliders
+        flavorWeightInput.addEventListener('input', () => syncSliderToNumber(flavorWeightInput, flavorWeightNumber));
+        compoundsWeightInput.addEventListener('input', () => syncSliderToNumber(compoundsWeightInput, compoundsWeightNumber));
+        processingWeightInput.addEventListener('input', () => syncSliderToNumber(processingWeightInput, processingWeightNumber));
+        geographyWeightInput.addEventListener('input', () => syncSliderToNumber(geographyWeightInput, geographyWeightNumber));
+        
+        // Set up event listeners for numeric inputs
+        flavorWeightNumber.addEventListener('input', () => syncNumberToSlider(flavorWeightNumber, flavorWeightInput));
+        compoundsWeightNumber.addEventListener('input', () => syncNumberToSlider(compoundsWeightNumber, compoundsWeightInput));
+        processingWeightNumber.addEventListener('input', () => syncNumberToSlider(processingWeightNumber, processingWeightInput));
+        geographyWeightNumber.addEventListener('input', () => syncNumberToSlider(geographyWeightNumber, geographyWeightInput));
+        
+        // Initialize weight displays
+        updateWeightDisplays();
+        
+        // Generate results when page loads
+        window.onload = generateTestResults;
+    </script>
+    
+    <div style="margin-top: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+        <h3>Understanding TCM Flavor-Element Relationships</h3>
+        <p>In Traditional Chinese Medicine, the Five Elements correlate with specific flavors:</p>
+        <ul>
+            <li><span class="element-highlight element-wood">Wood</span> corresponds to <strong>Sour</strong> flavor (affects Liver/Gallbladder)</li>
+            <li><span class="element-highlight element-fire">Fire</span> corresponds to <strong>Bitter</strong> flavor (affects Heart/Small Intestine)</li>
+            <li><span class="element-highlight element-earth">Earth</span> corresponds to <strong>Sweet</strong> flavor (affects Spleen/Stomach)</li>
+            <li><span class="element-highlight element-metal">Metal</span> corresponds to <strong>Pungent</strong> flavor (affects Lungs/Large Intestine)</li>
+            <li><span class="element-highlight element-water">Water</span> corresponds to <strong>Salty</strong> flavor (affects Kidneys/Bladder)</li>
+        </ul>
+        <p>The dominant element of a tea affects its energetic qualities and potential health effects according to TCM principles.</p>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="../tcm-tests/tcm-edge-case-tests.html" class="button">View TCM Edge Case Tests</a>
+        </div>
+    </div>
+</body>
+</html> 

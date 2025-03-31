@@ -21,40 +21,77 @@ export class ElementsCalculator {
   calculateElements(tea) {
     if (!tea) {
       return {
-        elements: this._getDefaultElements(),
+        elements: this._getZeroElements(),
         dominantElement: null,
         supportingElement: null,
         analysis: "Insufficient tea data for analysis"
       };
     }
     
-    // Get component element scores
-    const flavorElements = this._calculateFlavorElements(tea);
-    const compoundElements = this._calculateCompoundElements(tea);
-    const processingElements = this._calculateProcessingElements(tea);
-    const geographyElements = this._calculateGeographyElements(tea);
-    
     // Get component weights from config
     const weights = {
       flavor: this.config.get('elementWeights.flavor') || 0.4,     // 40% weight
       compounds: this.config.get('elementWeights.compounds') || 0.3, // 30% weight
       processing: this.config.get('elementWeights.processing') || 0.2, // 20% weight
-      geography: this.config.get('elementWeights.geography') || 0.1  // 10% weight
+      geography: this.config.get('elementWeights.geography') || 0.1   // 10% weight
     };
     
-    // Ensure weights sum to 1.0
-    const totalWeight = Object.values(weights).reduce((sum, w) => sum + w, 0);
-    Object.keys(weights).forEach(key => {
-      weights[key] = weights[key] / totalWeight;
-    });
+    // Get component element scores - will be null if data isn't available
+    const flavorElements = this._calculateFlavorElements(tea);
+    const compoundElements = this._calculateCompoundElements(tea);
+    const processingElements = this._calculateProcessingElements(tea);
+    const geographyElements = this._calculateGeographyElements(tea);
+    
+    // Create an array of component elements with their respective weights,
+    // but only include components that actually have data
+    const weightedElements = [];
+    
+    if (flavorElements) {
+      weightedElements.push({ elements: flavorElements, weight: weights.flavor });
+    }
+    
+    if (compoundElements) {
+      weightedElements.push({ elements: compoundElements, weight: weights.compounds });
+    }
+    
+    if (processingElements) {
+      weightedElements.push({ elements: processingElements, weight: weights.processing });
+    }
+    
+    if (geographyElements) {
+      weightedElements.push({ elements: geographyElements, weight: weights.geography });
+    }
+    
+    // If no valid components are available, return with insufficient data
+    if (weightedElements.length === 0) {
+      return {
+        elements: this._getZeroElements(),
+        dominantElement: null,
+        supportingElement: null,
+        analysis: "Insufficient tea data for analysis"
+      };
+    }
+    
+    // Check if any weights are 1.0, which means we should only use that component
+    const hasExclusiveWeight = weightedElements.some(item => item.weight >= 1.0);
+    
+    // If there's a component with weight 1.0, set others to 0
+    if (hasExclusiveWeight) {
+      weightedElements.forEach(item => {
+        item.weight = item.weight >= 1.0 ? 1.0 : 0.0;
+      });
+    } else {
+      // Ensure weights sum to 1.0 by normalizing only the included components
+      const totalWeight = weightedElements.reduce((sum, item) => sum + item.weight, 0);
+      if (totalWeight > 0) {
+        weightedElements.forEach(item => {
+          item.weight = item.weight / totalWeight;
+        });
+      }
+    }
     
     // Combine element scores with proper weighting
-    const combinedElements = this._combineElementScores([
-      { elements: flavorElements, weight: weights.flavor },
-      { elements: compoundElements, weight: weights.compounds },
-      { elements: processingElements, weight: weights.processing },
-      { elements: geographyElements, weight: weights.geography }
-    ]);
+    const combinedElements = this._combineElementScores(weightedElements);
     
     // Apply element interactions based on generating and controlling cycles
     const adjustedElements = this._applyElementInteractions(combinedElements);
@@ -65,25 +102,33 @@ export class ElementsCalculator {
       .sort(([, a], [, b]) => b - a);
     console.log("Sorted elements:", sortedElements);
     
-    const dominantElement = sortedElements[0][0];
-    const supportingElement = sortedElements[1][0];
+    // If we have valid element scores, identify dominant elements
+    let dominantElement = null;
+    let supportingElement = null;
+    let analysis = "Insufficient tea data for comprehensive analysis";
     
-    // Generate element analysis
-    const analysis = this._generateElementAnalysis(
-      adjustedElements, 
-      dominantElement, 
-      supportingElement,
-      tea
-    );
+    if (sortedElements.length >= 2 && sortedElements[0][1] > 0) {
+      dominantElement = sortedElements[0][0];
+      supportingElement = sortedElements[1][0];
+      
+      // Generate element analysis
+      analysis = this._generateElementAnalysis(
+        adjustedElements, 
+        dominantElement, 
+        supportingElement,
+        tea
+      );
+    }
     
     // Calculate component contributions
     const contributions = this._calculateComponentContributions(
       tea, 
-      flavorElements, 
-      compoundElements, 
-      processingElements, 
-      geographyElements,
-      weights
+      flavorElements || this._getZeroElements(),
+      compoundElements || this._getZeroElements(), 
+      processingElements || this._getZeroElements(), 
+      geographyElements || this._getZeroElements(),
+      weights,
+      weightedElements
     );
     
     return {
@@ -91,28 +136,28 @@ export class ElementsCalculator {
       rawElements: combinedElements,
       dominantElement,
       supportingElement,
-      elementPair: `${dominantElement}+${supportingElement}`,
+      elementPair: dominantElement && supportingElement ? `${dominantElement}+${supportingElement}` : null,
       analysis,
       contributions,
       componentScores: {
-        flavor: flavorElements,
-        compounds: compoundElements,
-        processing: processingElements,
-        geography: geographyElements
+        flavor: flavorElements || this._getZeroElements(),
+        compounds: compoundElements || this._getZeroElements(),
+        processing: processingElements || this._getZeroElements(),
+        geography: geographyElements || this._getZeroElements()
       }
     };
   }
   
   /**
-   * Default element distribution
+   * Zero element distribution for when no data is available
    */
-  _getDefaultElements() {
+  _getZeroElements() {
     return {
-      wood: 0.2,
-      fire: 0.2,
-      earth: 0.2,
-      metal: 0.2,
-      water: 0.2
+      wood: 0,
+      fire: 0,
+      earth: 0,
+      metal: 0,
+      water: 0
     };
   }
   
@@ -121,44 +166,11 @@ export class ElementsCalculator {
    */
   _calculateFlavorElements(tea) {
     if (!tea.flavorProfile || !Array.isArray(tea.flavorProfile) || tea.flavorProfile.length === 0) {
-      return this._getDefaultElements();
+      return null; // Return null to indicate no data available
     }
     
-    const elements = this._getDefaultElements();
-    let totalWeight = 0;
-    
-    // Process each flavor and apply diminishing returns for multiple similar flavors
-    const flavorCounts = {};
-    
-    tea.flavorProfile.forEach(flavor => {
-      // Track flavor occurrences for diminishing returns
-      const flavorKey = flavor.toLowerCase();
-      flavorCounts[flavorKey] = (flavorCounts[flavorKey] || 0) + 1;
-      
-      // Get flavor element mapping
-      const flavorElements = this.flavorMapper.mapFlavorToElements(flavorKey);
-      if (!flavorElements) return;
-      
-      // Apply diminishing returns for repeated flavors
-      const repetitionFactor = this._calculateDiminishingReturns(flavorCounts[flavorKey]);
-      
-      // Add weighted flavor contribution
-      Object.keys(elements).forEach(element => {
-        if (flavorElements[element]) {
-          elements[element] += flavorElements[element] * repetitionFactor;
-          totalWeight += flavorElements[element] * repetitionFactor;
-        }
-      });
-    });
-    
-    // Normalize element scores
-    if (totalWeight > 0) {
-      Object.keys(elements).forEach(element => {
-        elements[element] = elements[element] / totalWeight;
-      });
-    }
-    
-    return elements;
+    // Use the direct mapping from flavor mapper
+    return this.flavorMapper.mapFlavorProfileToElements(tea.flavorProfile);
   }
   
   /**
@@ -166,7 +178,7 @@ export class ElementsCalculator {
    */
   _calculateCompoundElements(tea) {
     if (tea.caffeineLevel === undefined || tea.lTheanineLevel === undefined) {
-      return this._getDefaultElements();
+      return null; // Return null to indicate no data available
     }
     
     // Map compounds to elements
@@ -178,41 +190,52 @@ export class ElementsCalculator {
   
   /**
    * Calculate processing method element scores
+   * @param {Object} tea - Tea object with properties
+   * @returns {Object} Element distribution or null if no data
    */
   _calculateProcessingElements(tea) {
-    if (!tea.processingMethods || !Array.isArray(tea.processingMethods) || tea.processingMethods.length === 0) {
-      // Fall back to tea type if specific processing methods aren't available
-      if (tea.type) {
-        return this.processingMapper.mapTeaTypeToElements(tea.type);
-      }
-      return this._getDefaultElements();
+    // Check if processing methods should be ignored based on configuration
+    if (this.config.processing && this.config.processing.ignoreProcessingMethods) {
+      console.log("[ElementsCalculator] Ignoring processing methods due to configuration");
+      return null; // Return null to indicate no data used
+    }
+
+    const processingMethods = tea.processingMethods || [];
+    
+    // If no processing methods defined, return null
+    if (!processingMethods.length) {
+      return null; // Return null to indicate no data available
     }
     
-    const elements = this._getDefaultElements();
-    let totalWeight = 0;
-    
-    // Process each method
-    tea.processingMethods.forEach(method => {
-      const methodElements = this.processingMapper.mapProcessingToElements(method);
-      if (!methodElements) return;
+    // If tea has processing methods, use them
+    if (tea.processingMethods && Array.isArray(tea.processingMethods) && tea.processingMethods.length > 0) {
+      const elements = this._getZeroElements();
+      let totalWeight = 0;
       
-      // Add weighted method contribution
-      Object.keys(elements).forEach(element => {
-        if (methodElements[element]) {
-          elements[element] += methodElements[element];
-          totalWeight += methodElements[element];
-        }
+      // Process each method
+      tea.processingMethods.forEach(method => {
+        const methodElements = this.processingMapper.mapProcessingToElements(method);
+        if (!methodElements) return;
+        
+        // Add weighted method contribution
+        Object.keys(elements).forEach(element => {
+          if (methodElements[element]) {
+            elements[element] += methodElements[element];
+            totalWeight += methodElements[element];
+          }
+        });
       });
-    });
-    
-    // Normalize element scores
-    if (totalWeight > 0) {
-      Object.keys(elements).forEach(element => {
-        elements[element] = elements[element] / totalWeight;
-      });
+      
+      // Normalize element scores
+      if (totalWeight > 0) {
+        Object.keys(elements).forEach(element => {
+          elements[element] = elements[element] / totalWeight;
+        });
+        return elements;
+      }
     }
     
-    return elements;
+    return null; // Return null if no valid data processed
   }
   
   /**
@@ -220,7 +243,7 @@ export class ElementsCalculator {
    */
   _calculateGeographyElements(tea) {
     if (!tea.geography) {
-      return this._getDefaultElements();
+      return null; // Return null to indicate no data available
     }
     
     return this.geographyMapper.mapGeographyToElements(tea.geography);
@@ -230,24 +253,30 @@ export class ElementsCalculator {
    * Combine element scores from multiple sources with weights
    */
   _combineElementScores(weightedElements) {
-    const combinedElements = this._getDefaultElements();
+    // Initialize with zeros
+    const combinedElements = this._getZeroElements();
     
-    // Reset values
-    Object.keys(combinedElements).forEach(element => {
-      combinedElements[element] = 0;
-    });
+    // Filter out items with zero weights or missing elements
+    const validElements = weightedElements.filter(item => 
+      item.elements && 
+      item.weight && 
+      item.weight > 0
+    );
     
-    // Calculate total weight to ensure normalization
-    const totalWeight = weightedElements.reduce((sum, item) => sum + (item.weight || 0), 0);
+    // If no valid elements, return zero distribution
+    if (validElements.length === 0) {
+      return this._getZeroElements();
+    }
+    
+    // Calculate total weight to ensure normalization (only for valid items)
+    const totalWeight = validElements.reduce((sum, item) => sum + item.weight, 0);
     
     // Add weighted contributions
-    weightedElements.forEach(item => {
-      if (!item.elements || !item.weight) return;
-      
+    validElements.forEach(item => {
       const normalizedWeight = item.weight / totalWeight;
       
-      Object.keys(item.elements).forEach(element => {
-        if (combinedElements[element] !== undefined) {
+      Object.keys(combinedElements).forEach(element => {
+        if (item.elements[element] !== undefined) {
           combinedElements[element] += item.elements[element] * normalizedWeight;
         }
       });
@@ -268,6 +297,14 @@ export class ElementsCalculator {
    * Apply Five Element interactions based on generating and controlling cycles
    */
   _applyElementInteractions(elements) {
+    // First check if element interactions are enabled in the config
+    const interactionsEnabled = this.config.get('elementInteractions.enabled');
+    
+    // If interactions are disabled, return the original elements without modification
+    if (interactionsEnabled === false) {
+      return {...elements};
+    }
+    
     const adjustedElements = {...elements};
     
     // Get interaction strengths from config
@@ -290,9 +327,11 @@ export class ElementsCalculator {
     
     // Re-normalize to ensure all elements sum to 1.0
     const total = Object.values(adjustedElements).reduce((sum, val) => sum + val, 0);
-    Object.keys(adjustedElements).forEach(element => {
-      adjustedElements[element] = adjustedElements[element] / total;
-    });
+    if (total > 0) {
+      Object.keys(adjustedElements).forEach(element => {
+        adjustedElements[element] = adjustedElements[element] / total;
+      });
+    }
     
     return adjustedElements;
   }
@@ -382,7 +421,7 @@ export class ElementsCalculator {
     const descriptions = {
       wood: "active vitality, upward energy, and growth-oriented properties",
       fire: "warming, stimulating, and transformative qualities",
-      earth: "centering, nourishing, and grounding characteristics",
+      earth: "centering, nourishing, and grounding characteristics", 
       metal: "clarity, refinement, and precision in its effects",
       water: "depth, introspection, and restorative properties"
     };
@@ -391,16 +430,27 @@ export class ElementsCalculator {
     let additionalContext = "";
     
     if (tea.type) {
-      if (element === "wood" && ["green", "white"].includes(tea.type.toLowerCase())) {
+      const teaType = tea.type.toLowerCase().trim();
+      
+      // Handle standard tea types
+      if (element === "wood" && ["green", "white"].includes(teaType)) {
         additionalContext = " This aligns well with the minimal processing of this tea type";
-      } else if (element === "fire" && ["black", "dark"].includes(tea.type.toLowerCase())) {
+      } else if (element === "fire" && ["black"].includes(teaType)) {
         additionalContext = " This is enhanced by the full oxidation of this tea type";
-      } else if (element === "earth" && ["oolong", "yellow"].includes(tea.type.toLowerCase())) {
+      } else if (element === "earth" && ["oolong", "yellow"].includes(teaType)) {
         additionalContext = " This reflects the balanced processing approach of this tea type";
-      } else if (element === "metal" && ["green", "white", "yellow"].includes(tea.type.toLowerCase())) {
+      } else if (element === "metal" && ["green", "white", "yellow"].includes(teaType)) {
         additionalContext = " This is characteristic of the clarity found in less-oxidized teas";
-      } else if (element === "water" && ["puerh", "dark"].includes(tea.type.toLowerCase())) {
-        additionalContext = " This is typical of aged or fermented tea types";
+      } 
+      // Handle dark tea family with specific descriptions
+      else if (element === "water" && ["dark", "puerh", "pu-erh", "sheng", "shou", "raw puerh", "ripe puerh"].includes(teaType)) {
+        if (["sheng", "raw puerh"].includes(teaType)) {
+          additionalContext = " This is characteristic of raw pu-erh with its aging potential and subtle depth";
+        } else if (["shou", "ripe puerh"].includes(teaType)) {
+          additionalContext = " This is prominent in ripe pu-erh with its earthy, smooth character from accelerated fermentation";
+        } else {
+          additionalContext = " This is typical of aged or fermented dark tea types";
+        }
       }
     }
     
@@ -450,22 +500,10 @@ export class ElementsCalculator {
   /**
    * Calculate component contributions to overall element profile
    */
-  _calculateComponentContributions(tea, flavorElements, compoundElements, processingElements, geographyElements, weights) {
+  _calculateComponentContributions(tea, flavorElements, compoundElements, processingElements, geographyElements, weights, weightedElements) {
     const dominantElementContributions = {};
     
-    // Get combined elements
-    const combinedElements = this._combineElementScores([
-      { elements: flavorElements, weight: weights.flavor },
-      { elements: compoundElements, weight: weights.compounds },
-      { elements: processingElements, weight: weights.processing },
-      { elements: geographyElements, weight: weights.geography }
-    ]);
-    
-    // Find dominant element
-    const dominantElement = Object.entries(combinedElements)
-      .sort(([, a], [, b]) => b - a)[0][0];
-    
-    // Calculate each component's contribution to the dominant element
+    // Prepare component data
     const components = [
       { name: "Flavor Profile", elements: flavorElements, weight: weights.flavor },
       { name: "Compound Balance", elements: compoundElements, weight: weights.compounds },
@@ -473,8 +511,30 @@ export class ElementsCalculator {
       { name: "Geographical Factors", elements: geographyElements, weight: weights.geography }
     ];
     
+    // Filter to only valid components with non-zero weights
+    const validComponents = components.filter(component => 
+      component.elements && 
+      component.weight && 
+      component.weight > 0
+    );
+    
+    // Get combined elements (direct reference to avoid recalculating)
+    const combinedElements = this._combineElementScores(weightedElements);
+    
+    // Find dominant element
+    const dominantElement = Object.entries(combinedElements)
+      .sort(([, a], [, b]) => b - a)[0][0];
+    
+    // If there are no valid components or dominantElement is invalid, return empty
+    if (validComponents.length === 0 || !dominantElement) {
+      return {
+        dominantElement: null,
+        contributions: {}
+      };
+    }
+    
     // Calculate contribution for each component
-    components.forEach(component => {
+    validComponents.forEach(component => {
       const rawContribution = component.elements[dominantElement] * component.weight;
       const percentageOfTotal = rawContribution / combinedElements[dominantElement];
       

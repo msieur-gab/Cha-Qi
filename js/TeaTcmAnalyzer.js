@@ -3,13 +3,12 @@
 
 import TcmSystemConfig from './config/TcmSystemConfig.js';
 import {ElementsCalculator} from './calculators/ElementsCalculator.js';
-import FlavorElementMapper from './calculators/FlavorElementMapper.js';
-import CompoundElementMapper from './calculators/CompoundElementMapper.js';
-import ProcessingElementMapper from './calculators/ProcessingElementMapper.js';
-import GeographyElementMapper from './calculators/GeographyElementMapper.js';
+import FlavorProfileMapper from './data/FlavorProfileMapper.js';
+import {CompoundElementMapper} from './calculators/CompoundElementMapper.js';
+import {ProcessingElementMapper} from './calculators/ProcessingElementMapper.js';
+import {GeographyElementMapper} from './calculators/GeographyElementMapper.js';
 import EffectsDeriver from './calculators/EffectsDeriver.js';
 
-import {flavorElementMappings} from './data/FlavorElementMappings.js';
 import processingElementMappings from './data/ProcessingElementMappings.js';
 import elementCombinationEffects from './data/ElementCombinationEffects.js';
 import { seasonalAssociations, seasonalGuidance } from './data/seasonalAssociations.js';
@@ -20,10 +19,7 @@ export class TeaTcmAnalyzer {
     this.config = new TcmSystemConfig(configOptions);
     
     // Initialize component mappers
-    this.flavorMapper = new FlavorElementMapper(
-      this.config, 
-      flavorElementMappings
-    );
+    this.flavorMapper = new FlavorProfileMapper();
     
     this.compoundMapper = new CompoundElementMapper(
       this.config
@@ -695,6 +691,13 @@ export class TeaTcmAnalyzer {
   }
   
   /**
+   * Reset configuration to default values
+   */
+  resetConfig() {
+    this.config.reset();
+  }
+  
+  /**
    * Get current system configuration
    */
   getConfig() {
@@ -820,7 +823,20 @@ export class TeaTcmAnalyzer {
 
 // Factory function to create analyzer with default configuration
 export function createAnalyzer(configOptions = {}) {
-  return new TeaTcmAnalyzer(configOptions);
+  // Set the default configuration to match the hierarchical test
+  const hierarchicalConfig = {
+    elementWeights: {
+      flavor: 1,       // Flavor has 100% weight
+      compounds: 0,     // Set other weights to 0
+      processing: 0,    
+      geography: 0      
+    }
+  };
+  
+  // Merge with user-provided options
+  const mergedConfig = { ...hierarchicalConfig, ...configOptions };
+  
+  return new TeaTcmAnalyzer(mergedConfig);
 }
 
 export default TeaTcmAnalyzer;

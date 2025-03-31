@@ -535,8 +535,17 @@ export class EffectsDeriver {
         effects.push("Balances digestive and metabolic function");
       } else if (type === "white" && elements.metal > 0.2) {
         effects.push("Delivers gentle antioxidant support");
-      } else if (type === "puerh" && elements.water > 0.2) {
-        effects.push("Assists with digestion of rich foods");
+      } 
+      // Handle dark tea family with more specific benefits
+      else if (type === "dark" || type === "puerh" || type === "pu-erh") {
+        effects.push("Supports healthy lipid metabolism");
+        
+        // Add specific effects for puerh subtypes
+        if (type === "sheng" || type === "raw puerh" || type === "raw pu-erh") {
+          effects.push("Provides natural detoxification support");
+        } else if (type === "shou" || type === "ripe puerh" || type === "ripe pu-erh") {
+          effects.push("Promotes healthy digestive microbiome");
+        }
       }
     }
     
@@ -614,8 +623,17 @@ export class EffectsDeriver {
           benefits.push("Assists with metabolism");
         } else if (type === "white") {
           benefits.push("Offers gentle free-radical protection");
-        } else if (type === "puerh") {
+        } 
+        // Handle dark tea family with more specific benefits
+        else if (type === "dark" || type === "puerh" || type === "pu-erh") {
           benefits.push("Supports healthy lipid metabolism");
+          
+          // Add specific benefits for puerh subtypes
+          if (type === "sheng" || type === "raw puerh" || type === "raw pu-erh") {
+            benefits.push("Provides natural detoxification support");
+          } else if (type === "shou" || type === "ripe puerh" || type === "ripe pu-erh") {
+            benefits.push("Promotes healthy digestive microbiome");
+          }
         }
       }
       
@@ -873,8 +891,15 @@ export class EffectsDeriver {
         pairings.push("Seafood or poultry dishes");
       } else if (type === "white") {
         pairings.push("Delicate fruits or mild sweets");
-      } else if (type === "puerh") {
+      } else if (type === "dark" || type === "puerh" || type === "pu-erh") {
         pairings.push("Rich or fatty foods that benefit from digestive support");
+        
+        // Add specific pairings for puerh subtypes
+        if (type === "sheng" || type === "raw puerh" || type === "raw pu-erh") {
+          pairings.push("Mildly sweet pastries or dried fruits");
+        } else if (type === "shou" || type === "ripe puerh" || type === "ripe pu-erh") {
+          pairings.push("Dark chocolate or rich desserts");
+        }
       }
     }
     
@@ -924,8 +949,15 @@ export class EffectsDeriver {
         case "black":
           tips.push(`Full boiling water (212°F / 100°C) helps extract robust character`);
           break;
+        case "dark":
         case "puerh":
+        case "pu-erh":
           tips.push(`Rinse briefly before first infusion to "awaken" the tea`);
+          if (type === "sheng" || type === "raw puerh" || type === "raw pu-erh") {
+            tips.push(`Adjust brewing temperature based on age (younger: 185-195°F / 85-90°C, aged: boiling)`);
+          } else if (type === "shou" || type === "ripe puerh" || type === "ripe pu-erh") {
+            tips.push(`Use fully boiling water (212°F / 100°C) for optimal extraction`);
+          }
           break;
       }
     }

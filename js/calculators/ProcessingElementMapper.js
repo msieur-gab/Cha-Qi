@@ -18,7 +18,9 @@ export class ProcessingElementMapper {
       return null;
     }
     
-    const normalizedMethod = method.toLowerCase().trim();
+    const normalizedMethod = method.toLowerCase().trim()
+      // Standardize hyphenation and spacing
+      .replace(/\s+/g, '-');
     
     // Check for exact match in processing mappings
     if (this.processingMappings.processingElementMappings[normalizedMethod]) {
@@ -28,35 +30,20 @@ export class ProcessingElementMapper {
     // Check for partial matches
     for (const [mappedMethod, elements] of Object.entries(this.processingMappings.processingElementMappings)) {
       // Match if method contains the mapped method or vice versa
-      if (normalizedMethod.includes(mappedMethod) || mappedMethod.includes(normalizedMethod)) {
+      // Also check with hyphens replaced by spaces for more flexible matching
+      const mappedMethodAlt = mappedMethod.replace(/-/g, ' ');
+      const normalizedMethodAlt = normalizedMethod.replace(/-/g, ' ');
+      
+      if (normalizedMethod.includes(mappedMethod) || 
+          mappedMethod.includes(normalizedMethod) ||
+          normalizedMethodAlt.includes(mappedMethodAlt) ||
+          mappedMethodAlt.includes(normalizedMethodAlt)) {
         return { ...elements };
       }
     }
     
-    // If no match found, return a default mapping
-    return this._getDefaultElements();
-  }
-  
-  /**
-   * Maps a tea type to Five Elements when processing methods aren't known
-   * 
-   * @param {string} teaType - Tea type to map
-   * @returns {Object} Element scores object with elements as keys and weights (0-1) as values
-   */
-  mapTeaTypeToElements(teaType) {
-    if (!teaType || typeof teaType !== 'string') {
-      return this._getDefaultElements();
-    }
-    
-    const normalizedType = teaType.toLowerCase().trim();
-    
-    // Get type mapping from processing mappings
-    if (this.processingMappings.teaTypeElementMappings[normalizedType]) {
-      return { ...this.processingMappings.teaTypeElementMappings[normalizedType] };
-    }
-    
-    // If no match found, return a default mapping
-    return this._getDefaultElements();
+    // If no match found, return null to indicate no valid mapping
+    return null;
   }
   
   /**
@@ -67,20 +54,25 @@ export class ProcessingElementMapper {
    */
   mapProcessingMethodsToElements(methods) {
     if (!methods || !Array.isArray(methods) || methods.length === 0) {
-      return this._getDefaultElements();
+      return null; // Return null to indicate no data
     }
     
-    // Initialize element scores
-    const elements = this._getDefaultElements();
+    // Initialize element scores to zero
+    const elements = this._getZeroElements();
     
     // Track method categories for diminishing returns
     const categoryCount = {};
     let totalContribution = 0;
     
+    // Flag to track if we found any valid method
+    let hasValidMethod = false;
+    
     // Process each method
     methods.forEach(method => {
       const methodElements = this.mapProcessingToElements(method);
       if (!methodElements) return;
+      
+      hasValidMethod = true;
       
       // Identify method category (if available)
       const normalizedMethod = method.toLowerCase().trim();
@@ -109,6 +101,11 @@ export class ProcessingElementMapper {
       });
     });
     
+    // If no valid methods were found, return null
+    if (!hasValidMethod) {
+      return null;
+    }
+    
     // Normalize element scores if we have contributions
     if (totalContribution > 0) {
       Object.keys(elements).forEach(element => {
@@ -126,7 +123,9 @@ export class ProcessingElementMapper {
    * Apply special effects for specific combinations of processing methods
    */
   _applySpecialCombinations(elements, methods) {
-    const normalizedMethods = methods.map(m => m.toLowerCase().trim());
+    const normalizedMethods = methods.map(m => 
+      m.toLowerCase().trim().replace(/\s+/g, '-')
+    );
     
     // Check for specific combinations
     
@@ -140,10 +139,24 @@ export class ProcessingElementMapper {
     // Withered + rolled + partial-oxidation (oolong processing)
     if (normalizedMethods.includes('withered') && 
         normalizedMethods.includes('rolled') && 
-        (normalizedMethods.includes('partial-oxidation') || normalizedMethods.includes('oxidized'))) {
+        (normalizedMethods.includes('partial-oxidation') || 
+         normalizedMethods.includes('oxidized') ||
+         normalizedMethods.includes('medium-oxidized'))) {
       // Enhance balanced distribution
       elements.earth = (elements.earth * 1.2) + 0.1;
       elements.wood = (elements.wood * 1.1) + 0.05;
+    }
+    
+    // White tea processing
+    if ((normalizedMethods.includes('minimally-oxidized') || 
+         normalizedMethods.includes('minimal-processing')) && 
+        (normalizedMethods.includes('withered') || 
+         normalizedMethods.includes('sun-dried'))) {
+      // Enhance Wood and Metal for white tea characteristics
+      elements.wood = (elements.wood * 1.2) + 0.05;
+      elements.metal = (elements.metal * 1.1) + 0.05;
+      // Reduce Fire slightly
+      elements.fire = Math.max(0, elements.fire * 0.8 - 0.05);
     }
     
     // Fermented + aged (puerh processing)
@@ -161,9 +174,11 @@ export class ProcessingElementMapper {
     
     // Re-normalize elements
     const total = Object.values(elements).reduce((sum, value) => sum + value, 0);
-    Object.keys(elements).forEach(element => {
-      elements[element] = elements[element] / total;
-    });
+    if (total > 0) {
+      Object.keys(elements).forEach(element => {
+        elements[element] = elements[element] / total;
+      });
+    }
   }
   
   /**
@@ -176,13 +191,22 @@ export class ProcessingElementMapper {
     if (!methods || !Array.isArray(methods) || methods.length === 0) {
       return {
         primaryElement: null,
-        elementDistribution: this._getDefaultElements(),
+        elementDistribution: null,
         tcmProfile: null
       };
     }
     
     // Map methods to elements
     const elements = this.mapProcessingMethodsToElements(methods);
+    
+    // If no elements data could be derived, return null
+    if (!elements) {
+      return {
+        primaryElement: null,
+        elementDistribution: null,
+        tcmProfile: null
+      };
+    }
     
     // Find dominant element
     const sortedElements = Object.entries(elements)
@@ -221,7 +245,7 @@ export class ProcessingElementMapper {
       cooling: {
         element: 'water',
         actions: ['Preserves', 'Calms', 'Nourishes Yin'],
-        examples: ['steamed', 'shade-grown', 'minimal-processing']
+        examples: ['steamed', 'shade-grown', 'minimal-processing', 'minimally-oxidized']
       },
       drying: {
         element: 'metal',
@@ -245,7 +269,7 @@ export class ProcessingElementMapper {
     
     // Match methods to categories
     methods.forEach(method => {
-      const normalizedMethod = method.toLowerCase().trim();
+      const normalizedMethod = method.toLowerCase().trim().replace(/\s+/g, '-');
       
       Object.entries(processingCategories).forEach(([category, info]) => {
         if (info.examples.some(example => 
@@ -338,15 +362,15 @@ export class ProcessingElementMapper {
   }
   
   /**
-   * Default balanced element distribution
+   * Zero-value element distribution
    */
-  _getDefaultElements() {
+  _getZeroElements() {
     return {
-      wood: 0.2,
-      fire: 0.2,
-      earth: 0.2,
-      metal: 0.2,
-      water: 0.2
+      wood: 0,
+      fire: 0,
+      earth: 0,
+      metal: 0,
+      water: 0
     };
   }
 }

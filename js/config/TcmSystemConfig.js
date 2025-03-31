@@ -7,14 +7,25 @@ export class TcmSystemConfig {
     this.config = {
       // Element weights for different components (must sum to 1.0)
       elementWeights: {
-        flavor: 0.4,       // Flavor has highest weight (40%)
-        compounds: 0.3,     // Compounds have significant weight (30%)  
-        processing: 0.2,    // Processing methods have moderate weight (20%)
-        geography: 0.1      // Geography has lowest weight (10%)
+        // flavor: 0.4,       // Flavor has highest weight (40%)
+        // compounds: 0.3,     // Compounds have significant weight (30%)  
+        // processing: 0.2,    // Processing methods have moderate weight (20%)
+        // geography: 0.1      // Geography has lowest weight (10%)
+        flavor: 0.4,       // Flavor has 100% weight
+        compounds: 0.3,     // Compounds disabled
+        processing: 0.2,    // Processing disabled
+        geography: 0.1      // Geography disabled
+        // teaType property completely removed to ensure it never affects calculations
+      },
+      
+      // Processing configuration
+      processing: {
+        ignoreProcessingMethods: false  // When true, processing methods will be ignored even if weight > 0
       },
       
       // Element interaction parameters
       elementInteractions: {
+        enabled: true,              // Enable/disable element interactions
         generatingStrength: 0.1,    // Strength of generating cycle relationships
         controllingStrength: 0.05,  // Strength of controlling cycle relationships
         antagonisticStrength: 0.03  // Strength of unexpected element conflicts
@@ -127,12 +138,17 @@ export class TcmSystemConfig {
   reset() {
     this.config = {
       elementWeights: {
-        flavor: 0.4,
-        compounds: 0.3,
-        processing: 0.2,
-        geography: 0.1
+        flavor: 1,      // Flavor has 100% weight
+        compounds: 0,   // Compounds disabled
+        processing: 0,  // Processing disabled
+        geography: 0    // Geography disabled
+        // teaType property completely removed
+      },
+      processing: {
+        ignoreProcessingMethods: true
       },
       elementInteractions: {
+        enabled: false,
         generatingStrength: 0.1,
         controllingStrength: 0.05,
         antagonisticStrength: 0.03

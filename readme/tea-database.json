@@ -6,21 +6,21 @@
       "origin": "Hangzhou, China",
       "caffeineLevel": 4,
       "lTheanineLevel": 7,
-      "flavorProfile": ["grassy", "nutty", "vegetal", "chestnut"],
-      "processingMethods": ["pan-fired", "flattened", "non-oxidized"],
+      "flavorProfile": ["grassy", "nutty", "chestnut", "vegetal"],
+      "processingMethods": ["pan-fired", "non-oxidized", "hand-pressed"],
       "geography": {
-        "altitude": 650,
-        "humidity": 72,
+        "altitude": 700,
+        "humidity": 70,
         "latitude": 30.2,
-        "temperature": 18,
-        "solarRadiation": 4.2
+        "temperature": 15,
+        "solarRadiation": 4.0
       },
       "tcmProperties": {
-        "energyType": "cooling",
+        "energyType": "cool",
         "elements": ["wood", "fire"],
-        "meridians": ["liver", "heart"],
-        "healthBenefits": ["improves focus", "clears heat", "lifts spirit"],
-        "mentalEffects": ["enhances divergent thinking", "promotes mental clarity"]
+        "meridians": ["liver", "gallbladder"],
+        "healthBenefits": ["clears heat", "refreshes mind", "improves vision"],
+        "mentalEffects": ["enhances concentration", "supports mental clarity"]
       },
       "brewingInstructions": {
         "waterTemperature": 80,
@@ -34,7 +34,7 @@
       "origin": "Fujian, China",
       "caffeineLevel": 3,
       "lTheanineLevel": 8,
-      "flavorProfile": ["floral", "fruity", "honey", "subtle"],
+      "flavorProfile": ["floral", "fruity", "honey"],
       "processingMethods": ["withered", "minimally oxidized"],
       "geography": {
         "altitude": 800,

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCM Flavor Mapping Edge Cases</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #4A6741;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .element-highlight {
+            display: inline-block;
+            padding: 3px 8px;
+            margin-right: 5px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .element-wood {
+            background-color: #91C788;
+            color: #fff;
+        }
+        .element-fire {
+            background-color: #FF8882;
+            color: #fff;
+        }
+        .element-earth {
+            background-color: #F3B263;
+            color: #fff;
+        }
+        .element-metal {
+            background-color: #B6C9F0;
+            color: #fff;
+        }
+        .element-water {
+            background-color: #86BBD8;
+            color: #fff;
+        }
+        .threshold-indicator {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .passed {
+            background-color: #DFF0D8;
+            color: #3C763D;
+            border: 1px solid #D6E9C6;
+        }
+        .failed {
+            background-color: #F2DEDE;
+            color: #A94442;
+            border: 1px solid #EBCCD1;
+        }
+    </style>
+</head>
+<body>
+    <h1>TCM Flavor Mapping Edge Cases</h1>
+    <p>This page tests the improved HierarchicalFlavorMapper with specific edge cases to validate the TCM-aligned changes.</p>
+    
+    <div id="test-results">
+        <h2>Running tests...</h2>
+    </div>
+
+    <script type="module">
+        import FlavorProfileMapper from '../../js/data/FlavorProfileMapper.js';
+
+        // Initialize mapper
+        const mapper = new FlavorProfileMapper();
+        const resultsContainer = document.getElementById('test-results');
+        let testResults = '<h2>TCM Edge Case Test Results</h2>';
+
+        // Format element distribution to percentage display
+        function formatElementDistribution(elements) {
+            let result = '';
+            Object.entries(elements)
+                .sort(([, a], [, b]) => b - a)
+                .forEach(([element, value]) => {
+                    const percentage = (value * 100).toFixed(1);
+                    result += `<span class="element-highlight element-${element}">${element.toUpperCase()}: ${percentage}%</span> `;
+                });
+            return result;
+        }
+
+        // Check if a test passes a particular threshold
+        function checkThreshold(value, threshold, comparator = '>=') {
+            switch(comparator) {
+                case '>=': return value >= threshold;
+                case '>': return value > threshold;
+                case '<=': return value <= threshold;
+                case '<': return value < threshold;
+                case '=': return Math.abs(value - threshold) < 0.0001;
+                default: return false;
+            }
+        }
+
+        // Create threshold indicator display
+        function createThresholdIndicator(value, threshold, comparator = '>=', label = null) {
+            const passes = checkThreshold(value, threshold, comparator);
+            const displayLabel = label || `${comparator} ${threshold}`;
+            return `<div class="threshold-indicator ${passes ? 'passed' : 'failed'}">
+                ${value.toFixed(2)} ${displayLabel}: ${passes ? 'PASSED ✓' : 'FAILED ✗'}
+            </div>`;
+        }
+
+        // CASE 1: Test direct flavor-to-element mappings
+        testResults += `
+        <div class="test-section">
+            <h3>1. Direct TCM Flavor-to-Element Mappings</h3>
+            <p>Testing that direct flavor mappings align with TCM principles. Primary elements should be at least 95% of the distribution.</p>
+        `;
+        
+        const tcmFlavors = ["sour", "bitter", "sweet", "pungent", "salty"];
+        const expectedElements = ["wood", "fire", "earth", "metal", "water"];
+
+        tcmFlavors.forEach((flavor, index) => {
+            const elements = mapper.mapFlavorToElements(flavor);
+            const primaryElement = expectedElements[index];
+            const primaryValue = elements[primaryElement];
+            
+            testResults += `
+            <div>
+                <strong>${flavor}</strong>: ${formatElementDistribution(elements)}
+                ${createThresholdIndicator(primaryValue, 0.95, '>=', `${primaryElement.toUpperCase()} >= 95%`)}
+            </div>
+            `;
+        });
+        
+        testResults += `</div>`;
+
+        // CASE 2: Test purely salty profile
+        testResults += `
+        <div class="test-section">
+            <h3>2. Purely Salty Profile</h3>
+            <p>Testing that a purely salty profile produces >95% Water element.</p>
+        `;
+        
+        const saltyProfile = ["salty", "briny", "seaweed"];
+        const saltyResults = mapper.mapFlavorProfileToElements(saltyProfile);
+        
+        testResults += `
+            <p><strong>Profile:</strong> ${saltyProfile.join(", ")}</p>
+            <p><strong>Element Distribution:</strong> ${formatElementDistribution(saltyResults)}</p>
+            ${createThresholdIndicator(saltyResults.water, 0.95, '>=', 'Water >= 95%')}
+        </div>
+        `;
+
+        // CASE 3: Citrus + Grassy should emphasize Wood (sour) and Fire (bitter)
+        testResults += `
+        <div class="test-section">
+            <h3>3. Citrus + Grassy Profile</h3>
+            <p>Testing that citrus and grassy notes together emphasize Wood (sour) and Fire (bitter) elements.</p>
+        `;
+        
+        const citrusGrassyProfile = ["citrus", "grassy", "lemon", "fresh"];
+        const citrusGrassyResults = mapper.mapFlavorProfileToElements(citrusGrassyProfile);
+        
+        testResults += `
+            <p><strong>Profile:</strong> ${citrusGrassyProfile.join(", ")}</p>
+            <p><strong>Element Distribution:</strong> ${formatElementDistribution(citrusGrassyResults)}</p>
+            <div style="display: flex; gap: 10px;">
+                ${createThresholdIndicator(citrusGrassyResults.wood, 0.6, '>=', 'Wood >= 60%')}
+                ${createThresholdIndicator(citrusGrassyResults.fire, 0.1, '>=', 'Fire >= 10%')}
+            </div>
+        </div>
+        `;
+
+        // CASE 4: Test the malty context-dependent mapping
+        testResults += `
+        <div class="test-section">
+            <h3>4. Malty in Different Contexts</h3>
+            <p>Testing that "malty" is interpreted differently when it appears with roasted notes.</p>
+        `;
+        
+        const maltyAlone = mapper.mapFlavorToElements("malty");
+        const maltyWithRoasted = mapper.mapFlavorToElements("malty", ["roasted", "toast"]);
+        
+        testResults += `
+            <div>
+                <p><strong>Malty alone:</strong> ${formatElementDistribution(maltyAlone)}</p>
+                ${createThresholdIndicator(maltyAlone.earth, 0.9, '>=', 'Earth >= 90%')}
+            </div>
+            
+            <div>
+                <p><strong>Malty with roasted notes:</strong> ${formatElementDistribution(maltyWithRoasted)}</p>
+                ${createThresholdIndicator(maltyWithRoasted.earth, 0.5, '>=', 'Earth >= 50%')}
+                ${createThresholdIndicator(maltyWithRoasted.fire, 0.3, '>=', 'Fire >= 30%')}
+            </div>
+        </div>
+        `;
+
+        // CASE 5: Test the aged category revision (now Earth/sweet dominant)
+        testResults += `
+        <div class="test-section">
+            <h3>5. Aged Tea Profile</h3>
+            <p>Testing that aged teas now emphasize Earth (sweet) due to fermentation's transformative nature.</p>
+        `;
+        
+        const agedProfile = ["aged", "vintage", "fermented", "complex"];
+        const agedResults = mapper.mapFlavorProfileToElements(agedProfile);
+        
+        testResults += `
+            <p><strong>Profile:</strong> ${agedProfile.join(", ")}</p>
+            <p><strong>Element Distribution:</strong> ${formatElementDistribution(agedResults)}</p>
+            ${createThresholdIndicator(agedResults.earth, 0.5, '>=', 'Earth >= 50%')}
+        </div>
+        `;
+
+        // CASE 6: Test green_vegetal vs vegetal category distinction
+        testResults += `
+        <div class="test-section">
+            <h3>6. Green Vegetal vs Vegetal Distinction</h3>
+            <p>Testing the separation of fresh green notes (Wood/sour) from cooked vegetal notes (Fire/bitter).</p>
+        `;
+        
+        const greenVegetalProfile = ["fresh", "grassy", "green", "herbaceous"];
+        const matureVegetalProfile = ["vegetal", "spinach", "cooked greens", "artichoke"];
+
+        const greenResults = mapper.mapFlavorProfileToElements(greenVegetalProfile);
+        const matureResults = mapper.mapFlavorProfileToElements(matureVegetalProfile);
+        
+        testResults += `
+            <div>
+                <p><strong>Green Profile:</strong> ${greenVegetalProfile.join(", ")}</p>
+                <p><strong>Element Distribution:</strong> ${formatElementDistribution(greenResults)}</p>
+                ${createThresholdIndicator(greenResults.wood, 0.5, '>=', 'Wood >= 50%')}
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <p><strong>Mature Profile:</strong> ${matureVegetalProfile.join(", ")}</p>
+                <p><strong>Element Distribution:</strong> ${formatElementDistribution(matureResults)}</p>
+                ${createThresholdIndicator(matureResults.fire, 0.6, '>=', 'Fire >= 60%')}
+            </div>
+        </div>
+        `;
+
+        // CASE 7: Test normalization change - dominant flavor profiles
+        testResults += `
+        <div class="test-section">
+            <h3>7. Dominant Flavor Profile</h3>
+            <p>Testing that strong dominant flavors preserve their element associations without normalization diluting them.</p>
+        `;
+        
+        const dominantProfile = ["salty", "salty", "salty", "briny", "oceanic"];
+        const dominantResults = mapper.mapFlavorProfileToElements(dominantProfile);
+        
+        testResults += `
+            <p><strong>Profile:</strong> ${dominantProfile.join(", ")}</p>
+            <p><strong>Element Distribution:</strong> ${formatElementDistribution(dominantResults)}</p>
+            ${createThresholdIndicator(dominantResults.water, 0.9, '>=', 'Water >= 90%')}
+        </div>
+        `;
+
+        // Add explanatory notes about the changes made
+        testResults += `
+        <div class="test-section">
+            <h3>Summary of TCM Alignment Improvements</h3>
+            <ol>
+                <li><strong>Simplified Element-Flavor Weights:</strong> Adjusted TCM flavor-to-element distributions to prioritize primary elements (95% to primary element, 5% to secondary).</li>
+                <li><strong>Added Green Vegetal Category:</strong> Created a specific green_vegetal category for fresh vegetal notes, emphasizing Wood (sour) element, while mature vegetal notes emphasize Fire (bitter).</li>
+                <li><strong>Revised Aged Tea Mapping:</strong> Changed aged teas to emphasize Earth (sweet) due to fermentation's transformative nature in TCM.</li>
+                <li><strong>Context-Sensitive Malty Mapping:</strong> Added logic to interpret "malty" differently when it appears with roasted notes.</li>
+                <li><strong>Optimized Normalization:</strong> Skip normalization for profiles with dominant flavors to preserve strong TCM associations.</li>
+            </ol>
+        </div>
+        `;
+
+        // Update the test results container
+        resultsContainer.innerHTML = testResults;
+    </script>
+</body>
+</html> 

@@ -8,13 +8,18 @@ export const processingElementMappings = {
     description: "Preserves the fresh, green qualities of the leaf with minimal transformation",
     examples: ["Green tea", "Yellow tea"]
   },
+  "minimally-oxidized": { 
+    wood: 0.6, metal: 0.3, water: 0.1,
+    description: "Very light oxidation that preserves fresh characteristics with subtle complexity",
+    examples: ["White tea", "Some premium green teas"]
+  },
   "lightly-oxidized": { 
     wood: 0.5, metal: 0.3, fire: 0.1, water: 0.1,
     description: "Allows subtle transformation while maintaining vegetal freshness",
     examples: ["Light oolong", "Some white teas"]
   },
   "medium-oxidized": { 
-    wood: 0.3, fire: 0.3, earth: 0.2, metal: 0.2,
+    wood: 0.2, fire: 0.3, earth: 0.3, metal: 0.2,
     description: "Creates balance between fresh qualities and deeper notes",
     examples: ["Traditional oolong", "Some white teas"]
   },
@@ -36,7 +41,7 @@ export const processingElementMappings = {
     examples: ["Japanese green teas", "Some Chinese greens"]
   },
   "pan-fired": { 
-    fire: 0.4, wood: 0.3, metal: 0.3,
+    fire: 0.5, wood: 0.3, metal: 0.2,
     description: "Dry heat application that develops nutty-toasty notes while preserving some freshness",
     examples: ["Chinese green teas", "Some oolongs"]
   },
@@ -68,7 +73,7 @@ export const processingElementMappings = {
   
   // DRYING METHODS
   "sun-dried": { 
-    fire: 0.3, wood: 0.3, metal: 0.3, earth: 0.1,
+    fire: 0.2, wood: 0.4, metal: 0.3, earth: 0.1,
     description: "Natural drying that preserves compounds while adding subtle complexity",
     examples: ["White tea", "Some Pu-erh maocha"]
   },
@@ -90,7 +95,7 @@ export const processingElementMappings = {
     examples: ["Many oolongs", "Some black teas"]
   },
   "rolled": { 
-    earth: 0.4, metal: 0.3, wood: 0.2, fire: 0.1,
+    earth: 0.3, metal: 0.3, wood: 0.3, fire: 0.1,
     description: "Tight rolling that concentrates flavors and aromas",
     examples: ["Ball-shaped oolongs", "Gunpowder green"]
   },
@@ -137,8 +142,8 @@ export const processingElementMappings = {
     examples: ["Shou Pu-erh", "Some Liu Bao"]
   },
   "yellowing": { 
-    wood: 0.4, earth: 0.3, fire: 0.2, metal: 0.1,
-    description: "Unique slight oxidation with dampness and heat",
+    wood: 0.4, earth: 0.4, fire: 0.1, metal: 0.1,
+    description: "Unique slight oxidation with dampness and heat that develops mellow character",
     examples: ["Yellow tea"]
   },
   
@@ -154,7 +159,7 @@ export const processingElementMappings = {
     examples: ["Rose tea", "Osmanthus oolong"]
   },
   "fumigated": { 
-    metal: 0.5, fire: 0.3, wood: 0.1, water: 0.1,
+    fire: 0.4, metal: 0.4, wood: 0.1, water: 0.1,
     description: "Adding character through exposure to smoke or steam",
     examples: ["Lapsang Souchong", "Some specialty teas"]
   },
@@ -202,20 +207,6 @@ export const processingElementMappings = {
   }
 };
 
-// Tea type to elements mapping (for when specific processing details aren't available)
-export const teaTypeElementMappings = {
-  "green": { wood: 0.6, metal: 0.2, water: 0.1, fire: 0.05, earth: 0.05 },
-  "white": { wood: 0.4, metal: 0.3, water: 0.2, earth: 0.1 },
-  "yellow": { wood: 0.4, earth: 0.3, metal: 0.2, fire: 0.1 },
-  "oolong": { wood: 0.25, fire: 0.25, earth: 0.2, metal: 0.2, water: 0.1 },
-  "black": { fire: 0.6, earth: 0.2, water: 0.1, wood: 0.1 },
-  "puerh": { water: 0.4, earth: 0.3, fire: 0.2, wood: 0.1 },
-  "dark": { water: 0.5, earth: 0.3, fire: 0.1, wood: 0.1 },
-  "herbal": { wood: 0.3, water: 0.3, metal: 0.2, earth: 0.2 },
-  "rooibos": { earth: 0.4, fire: 0.3, water: 0.2, wood: 0.1 }
-};
-
 export default {
-  processingElementMappings,
-  teaTypeElementMappings
+  processingElementMappings
 };

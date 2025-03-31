@@ -2,8 +2,10 @@
 // Main application for the Five Elements Tea Analyzer
 
 import { createAnalyzer } from './js/TeaTcmAnalyzer.js';
+import teaDatabase from './js/data/TeaDatabase.js';
 
-// Initialize the TCM tea analyzer
+// Initialize the TCM tea analyzer without overriding the config
+// This will use the default configuration from TcmSystemConfig.js
 const analyzer = createAnalyzer();
 
 // DOM Elements
@@ -748,7 +750,7 @@ function toggleSampleTeasDropdown() {
     sampleTeasDropdown.classList.toggle('hidden');
 }
 
-// Load a sample tea
+// Function to load a sample tea
 function loadSampleTea(teaId) {
     // Hide dropdown
     sampleTeasDropdown.classList.add('hidden');
@@ -760,6 +762,11 @@ function loadSampleTea(teaId) {
         alert(`Sample tea "${teaId}" not found`);
         return;
     }
+    
+    console.log(`Loading ${teaData.name}`);
+    
+    // Only update context-specific settings if needed
+    // No need to override the core configuration that's defined in TcmSystemConfig
     
     // Fill form with tea data
     fillFormWithTeaData(teaData);
@@ -834,6 +841,15 @@ function clearForm() {
 
 // Sample tea data
 function getSampleTeaData(teaId) {
+    // Get tea data from tea database
+    const tea = teaDatabase.find(tea => tea.id === teaId);
+    
+    // If tea is found in database, return it
+    if (tea) {
+        return tea;
+    }
+    
+    // Fallback to original sample teas if not found in database
     const samples = {
         dragonwell: {
             name: "Dragon Well (Longjing)",
@@ -937,7 +953,7 @@ function getSampleTeaData(teaId) {
             origin: "Fujian, China",
             caffeineLevel: 3,
             lTheanineLevel: 6,
-            flavorProfile: ["honey", "floral", "hay", "melon", "subtle"],
+            flavorProfile: ["fruity", "floral", "honey"],
             processingMethods: ["withered", "sun-dried", "minimal-processing"],
             geography: {
                 altitude: 900,
